@@ -70,7 +70,6 @@ def xdot(t, xin, Kin, lcin, yc):
     uth = -(np.dot(Kin, x)) + lcin * yc(t)
     uth = uth[0, 0]
     u = np.clip(uth, -8.0, 8.0)
-    u = yc(t)
 
     # computes the value of the x dot vector (state derivative)
 
