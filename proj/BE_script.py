@@ -7,19 +7,52 @@ from control import matlab
 
 from scipy.integrate import solve_ivp
 
-
+# Plot le lieu des racines en boucle ouverte
 plot_pmap = True
+
+# Plot la réponse à un échelon unitaire en boucle ouverte
 plot_step_bo = True
+
+# Plot la réponse à un échelon (pi/5) du modèle non linéaire
+plot_non_linear_bo = True
+
+# Plot la comparaison de la sortie theta entre le modèle
+# linéaire et non linéaire, sur un temps court avec un échelon unitaire entrée
+plot_compare_lin_nonlin_bo = True
+
+# Plot la réponse à un impulsion
 plot_impulse_bo = True
-plot_locus = True
-plot_prop_gain = True
+
+# Plot le lieu des racines en fonction de Kp (à la main et avec rootlocus)
+plot_locus_prop_gain = True
+
+# Plot la réponse à un échelon unitaire avec Kp = 1
+plot_prop_gain_resp = True
+
+# Plot le lieu des racine après calcul du retour d'état
 plot_pmap_bf = True
+
+# Plot la réponse en bf à échelon sans lc
 plot_step_bf = True
+
+# Plot la réponse en bf à échelon avec lc
 plot_step_bf_gain = True
+
+# Plot la commande en bf avec retour d'état
 plot_input_bf = True
+
+# Plot la réponse en bf à échelon unitaire avec lc en utilisant lsim
 plot_lsim_pregain = True
+
+# Plot la réponse à un échelon (pi/5) du modèle non linéaire
 plot_non_linear = True
-plot_non_linear_euler = True #not used for now
+
+# Plot la comparaison de theta/psi/u entre le modèle linéaire et non linéaire
+# avec un échelon en entrée pour les valeurs de K et lc calculées au début
+plot_compare_lin_nonlin_bf = True
+
+#Pas utilisée
+plot_non_linear_euler = True
 
 # Parameters of the  two-wheel robot
 
@@ -55,9 +88,17 @@ tmp = beta + fw
 
 
 # Parametre de la fonction :
-# x l'état à un instant t, K, le gain de retour d'état, yc, la consigne à un instant t, lc le prégain
+# t : le temps de simulation
+# x : l'état à un instant t
+# Kin : le gain de retour d'état
+# lcin : le prégain
+# yc : la consigne à un instant t : une fontion qui prend en argument les 2 suivant :
+# start_time : le temps de début de l'échelon
+# amplitude : l'amplitude de l'échelon en entrée
 
-def xdot(t, xin, Kin, lcin, yc):
+# Paramère de sortie : xdot
+
+def xdot(t, xin, Kin, lcin, yc, start_time_input, amplitude):
     # positionvector
     theta = xin[0]  # angular position of thewheel
     psi = xin[1]  # angular positionof the gyropode
@@ -67,7 +108,7 @@ def xdot(t, xin, Kin, lcin, yc):
 
     # compute u
     x = np.reshape(xin, (4, 1))
-    uth = -(np.dot(Kin, x)) + lcin * yc(t)
+    uth = -(np.dot(Kin, x)) + lcin * yc(t, start_time_input, amplitude)
     uth = uth[0, 0]
     u = np.clip(uth, -8.0, 8.0)
 
@@ -94,11 +135,12 @@ def xdot(t, xin, Kin, lcin, yc):
     return [xdot1, xdot2, xdot3, xdot4]
 
 
-def consigne_temp(t):
-    if t < 1:
+# Fonction pour changer l'échelon d'entrée
+def consigne_temp(t, start_time, amplitude):
+    if t < start_time:
         return 0
     else:
-        return np.pi/5
+        return amplitude
 
 
 def main():
@@ -140,6 +182,8 @@ def main():
     D = 0
     sysbo = ctrl.ss(A, B, C, D)
 
+    #Observability and controlability 
+
     Qo = ctrl.obsv(A, C)
     # print(np.linalg.matrix_rank(Qo))
 
@@ -151,23 +195,22 @@ def main():
         poles = ctrl.poles(sysbo)
         poles_real = np.real(poles)
         poles_im = np.imag(poles)
-        ax1.scatter(poles_real, poles_im, marker='x')
+        ax1.scatter(poles_real, poles_im, marker='x', label='poles')
         zeros = ctrl.zeros(sysbo)
         zeros_real = np.real(zeros)
         zeros_im = np.imag(zeros)
-        ax1.scatter(zeros_real, zeros_im, marker='o')
+        ax1.scatter(zeros_real, zeros_im, marker='o', label='zeros')
         ax1.set_xlabel('Real part')
         ax1.set_ylabel('Imaginary part')
         ax1.set_title('pzmap')
+        ax1.legend()
         ax1.grid(True)
 
     # print(ctrl.damp(sysbo))
 
-    # Plot step response
-
     if plot_step_bo:
         dt = 0.01
-        tf = 10
+        tf = 1
         t = np.arange(0, tf, dt)
         x0 = np.array([[0], [0], [0], [0]])
         tout, theta = ctrl.step_response(sysbo, t, x0)
@@ -180,11 +223,60 @@ def main():
         ax2.set_title('Step response')
         ax2.grid(True)
 
+
+    tspan = (0.0, 5.0)
+    t_eval = np.linspace(tspan[0], tspan[1], num=200)
+    x0 = [0.0, 0.0, 0.0, 0.0]
+    reference_amplitude = np.pi/5
+    start_reference_time = 0
+    sol_bo = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
+
+    t = sol_bo.t
+    xout = sol_bo.y
+    theta_nlin_bo = sol_bo.y[0, :]
+    psi_nlin_bo = sol_bo.y[1, :]
+
+    if plot_non_linear_bo:
+        fig13, ax13 = plt.subplots()
+        ax13.plot(t, theta_nlin_bo, label='theta')
+        ax13.plot(t, psi_nlin_bo, label='psi')
+
+        ax13.set_xlabel('Time (s)')
+        ax13.set_ylabel('Angle (rad)')
+        ax13.set_title('Non linear step response')
+        ax13.legend()
+        ax13.grid(True)
+
+    if plot_compare_lin_nonlin_bo:
+        tspan = (0.0, 0.8)
+        t_eval = np.linspace(tspan[0], tspan[1], num=200)
+        x0 = [0.0, 0.0, 0.0, 0.0]
+        reference_amplitude = 1
+        start_reference_time = 0
+        sol_bo = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
+
+        t = sol_bo.t
+        xout = sol_bo.y
+        theta_nlin_bo = sol_bo.y[0, :]
+        psi_nlin_bo = sol_bo.y[1, :]
+        x0 = np.array([[0], [0], [0], [0]])
+        tout, theta = ctrl.step_response(sysbo, t, x0)
+
+        fig14, ax14 = plt.subplots()
+        ax14.plot(t, theta, label='linear theta')
+        ax14.plot(t, theta_nlin_bo, label='non linear theta')
+
+        ax14.set_xlabel('Time (s)')
+        ax14.set_ylabel('Angle (rad)')
+        ax14.set_title('BO step response linearization comparison')
+        ax14.legend()
+        ax14.grid(True)
+
     # Plot impulse response
 
     if plot_impulse_bo:
         dt = 0.01
-        tf = 10
+        tf = 1
         t = np.arange(0, tf, dt)
         x0 = np.array([[0], [0], [0], [0]])
         tout, theta = ctrl.impulse_response(sysbo, timepts=t)
@@ -213,7 +305,7 @@ def main():
 
     # Considering a closed loop system with proportional gain Kp : u = -Kp*epsilon
 
-    if plot_locus:
+    if plot_locus_prop_gain:
         Kp = np.logspace(-1, 3, 200)
         fig4, ax4 = plt.subplots()
         ctrl.root_locus(G)
@@ -233,9 +325,9 @@ def main():
         ax5.set_title('pzmap depending on proportional gain')
         ax5.grid(True)
 
-    if plot_prop_gain:
+    if plot_prop_gain_resp:
         dt = 0.01
-        tf = 10
+        tf = 1
         t = np.arange(0, tf, dt)
         x0 = np.array([[0], [0], [0], [0]])
         F = ctrl.feedback(1 * G, 1)
@@ -327,14 +419,15 @@ def main():
         poles_cl = ctrl.poles(sysGCL)
         poles_real_cl = np.real(poles_cl)
         poles_im_cl = np.imag(poles_cl)
-        ax7.scatter(poles_real_cl, poles_im_cl, marker='x')
+        ax7.scatter(poles_real_cl, poles_im_cl, marker='x', label='poles')
         zeros_cl = ctrl.zeros(sysGCL)
         zeros_real_cl = np.real(zeros_cl)
         zeros_im_cl = np.imag(zeros_cl)
-        ax7.scatter(zeros_real_cl, zeros_im_cl, marker='o')
+        ax7.scatter(zeros_real_cl, zeros_im_cl, marker='o', label='zeros')
         ax7.set_xlabel('Real part')
         ax7.set_ylabel('Imaginary part')
         ax7.set_title('closed loop pzmap')
+        ax7.legend()
         ax7.grid(True)
 
     poles_cl = ctrl.poles(sysGCL)
@@ -346,17 +439,22 @@ def main():
 
     if plot_step_bf:
         dt = 0.001
-        tf = 1
+        tf = 2
         t = np.arange(0, tf, dt)
         x0 = np.array([[0], [0], [0], [0]])
+        yc = []
+        for i in range(len(t)):
+            yc.append(np.pi / 5)
         tout, theta = ctrl.step_response(np.pi / 5 * sysGCL, t, x0)
 
         fig8, ax8 = plt.subplots()
-        ax8.plot(tout, theta)
+        ax8.plot(tout, theta, label='theta')
+        ax8.plot(tout, yc, label='input')
 
         ax8.set_xlabel('Time (s)')
         ax8.set_ylabel('Angle (rad)')
         ax8.set_title('Step response with state feedback')
+        ax8.legend()
         ax8.grid(True)
 
     # print(ctrl.step_info(np.pi/5*sysGCL))
@@ -378,14 +476,16 @@ def main():
         tout, theta, xout = ctrl.step_response(sysGCL_eps, t, x0, return_x=True)
         u = np.array([-1 * np.dot(K, xout)])
         u = np.reshape(u, np.shape(tout))
+        u = np.clip(u, -8, 8)
 
         fig9, ax9 = plt.subplots()
-        ax9.plot(tout, theta)
-        ax9.plot(tout, u)
+        ax9.plot(tout, theta, label='theta')
+        ax9.plot(tout, u, label='u')
 
         ax9.set_xlabel('Time (s)')
         ax9.set_ylabel('Angle (rad)')
         ax9.set_title('Step feedback with reference gain')
+        ax9.legend()
         ax9.grid(True)
 
     if plot_input_bf:
@@ -401,13 +501,13 @@ def main():
         ax10.plot(tout, u)
 
         ax10.set_xlabel('Time (s)')
-        ax10.set_ylabel('Angle (rad)')
+        ax10.set_ylabel('Command (V)')
         ax10.set_title('u for a state feedback without pregain')
         ax10.grid(True)
 
     if plot_lsim_pregain:
         dt = 0.01
-        tf = 5
+        tf = 3
         t = np.arange(0, tf, dt)
         x0 = np.array([[0], [0], [0], [0]])
         yc = np.zeros((1, int(tf / dt)))
@@ -425,8 +525,8 @@ def main():
         u = np.reshape(u, np.shape(tout))
 
         fig11, ax11 = plt.subplots()
-        ax11.plot(tout, yc, label='yc')
         ax11.plot(tout, y, label='theta')
+        ax11.plot(tout, yc, label='yc')
 
         ax11.set_xlabel('Time (s)')
         ax11.set_ylabel('Amplitude')
@@ -458,11 +558,13 @@ def main():
     lc_robust = 1 / dc_gain_robust
     #print(K_robust)
     #print(lc_robust)
-    tspan = (0.0, 5.0)
-    t_eval = np.linspace(tspan[0], tspan[1], num=250)
+    tspan = (0.0, 2.0)
+    t_eval = np.linspace(tspan[0], tspan[1], num=200)
 
     x0 = [0.0, 0.0, 0.0, 0.0]
-    sol = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K_robust, lc_robust, consigne_temp))
+    start_reference_time = 1
+    start_amplitude = np.pi/5
+    sol = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K_robust, lc_robust, consigne_temp, start_reference_time, start_amplitude))
 
     t = sol.t
     xout = sol.y
@@ -472,12 +574,14 @@ def main():
     #compute u with non linearized model
 
     command = np.zeros(len(t))
+    yc = []
     for i in range(len(t)):
-        yc_actuelle = consigne_temp(t[i])
+        yc_actuelle = consigne_temp(t[i], start_reference_time, start_amplitude)
         x_actuelle = xout[:, i]
         utheo = -np.dot(K_robust, x_actuelle) + yc_actuelle*lc_robust
         utheo = np.clip(utheo, -8.0, 8.0)
         command[i] = utheo[0]
+        yc.append(yc_actuelle)
 
 
     # Non linear simulation (same as ode45)
@@ -486,12 +590,39 @@ def main():
         ax12.plot(t, theta_nlin, label='theta')
         ax12.plot(t, psi_nlin, label='psi')
         ax12.plot(t, command, label='u')
+        ax12.plot(t, yc, label='yc')
 
         ax12.set_xlabel('Time (s)')
         ax12.set_ylabel('Amplitude')
-        ax12.set_title('Non linearized response')
+        ax12.set_title('Closed-loop non linearized response')
         ax12.grid(True)
         ax12.legend()
+
+    if plot_compare_lin_nonlin_bf:
+        fig13, ax13 = plt.subplots()
+        ax13.plot(t, theta_nlin, label='theta_non_lin')
+        ax13.plot(t, psi_nlin, label='psi_non_lin')
+        ax13.plot(t, command, label='u_non_lin')
+        ax13.plot(t, yc, label='yc')
+
+        yc = np.array(yc)
+        signal_sys = signal.StateSpace(ACL, BCL * lc, CCL, D)
+        tout, y, x = signal.lsim(signal_sys, U=yc, T=t)
+
+        x = np.transpose(x)
+        psi_lin_bf = x[1,:]
+        u = np.array([-1 * np.dot(K, x)] + lc * yc)
+        u = np.reshape(u, np.shape(tout))
+
+        ax13.plot(tout, y, '--',label='theta_lin')
+        ax13.plot(tout, psi_lin_bf, '--', label='psi_lin')
+        ax13.plot(tout, u, '--', label='u_lin')
+
+        ax13.set_xlabel('Time (s)')
+        ax13.set_ylabel('Amplitude')
+        ax13.set_title('BF step response linearization comparison')
+        ax13.grid(True)
+        ax13.legend()
 
     # non linear simulation (euler approximation)
     if plot_non_linear_euler:
