@@ -7,133 +7,54 @@ from control import matlab
 
 from scipy.integrate import solve_ivp
 
+import NXTwaysim as nxt
+
 # Plot le lieu des racines en boucle ouverte
-plot_pmap = True
+plot_pmap = False
 
 # Plot la réponse à un échelon unitaire en boucle ouverte
-plot_step_bo = True
+plot_step_bo = False
 
 # Plot la réponse à un échelon (pi/5) du modèle non linéaire
-plot_non_linear_bo = True
+plot_non_linear_bo = False
 
 # Plot la comparaison de la sortie theta entre le modèle
 # linéaire et non linéaire, sur un temps court avec un échelon unitaire entrée
-plot_compare_lin_nonlin_bo = True
+plot_compare_lin_nonlin_bo = False
 
 # Plot la réponse à un impulsion
-plot_impulse_bo = True
+plot_impulse_bo = False
 
 # Plot le lieu des racines en fonction de Kp (à la main et avec rootlocus)
-plot_locus_prop_gain = True
+plot_locus_prop_gain = False
 
 # Plot la réponse à un échelon unitaire avec Kp = 1
-plot_prop_gain_resp = True
+plot_prop_gain_resp = False
 
 # Plot le lieu des racine après calcul du retour d'état
-plot_pmap_bf = True
+plot_pmap_bf = False
 
 # Plot la réponse en bf à échelon sans lc
-plot_step_bf = True
+plot_step_bf = False
 
 # Plot la réponse en bf à échelon avec lc
-plot_step_bf_gain = True
+plot_step_bf_gain = False
 
 # Plot la commande en bf avec retour d'état
-plot_input_bf = True
+plot_input_bf = False
 
 # Plot la réponse en bf à échelon unitaire avec lc en utilisant lsim
-plot_lsim_pregain = True
+plot_lsim_pregain = False
 
 # Plot la réponse à un échelon (pi/5) du modèle non linéaire
-plot_non_linear = True
+plot_non_linear = False
 
 # Plot la comparaison de theta/psi/u entre le modèle linéaire et non linéaire
 # avec un échelon en entrée pour les valeurs de K et lc calculées au début
-plot_compare_lin_nonlin_bf = True
+plot_compare_lin_nonlin_bf = False
 
 #Pas utilisée
-plot_non_linear_euler = True
-
-# Parameters of the  two-wheel robot
-
-# Physical Constant
-
-g = 9.81  # gravity acceleration [m/sec^2]
-
-# Lego Mindstorms EV3 Parameters
-m = 0.03  # wheel weight [kg] valor inicial 0.03
-R = 0.042  # wheel radius [m]  valor inicial 0.04
-Jw = m * R ** 2 / 2  # wheel inertia moment [kgm^2]
-M = 0.67  # body weight [kg]
-W = 0.165  # body width [m]
-D = 0.05  # body depth [m]
-H = 0.152  # body height [m]
-L = H / 2  # distance of the center of mass from the wheel axle [m]
-Jpsi = M * L ** 2 / 3  # body pitch inertia moment [kgm^2]
-Jphi = M * (W ** 2 + D ** 2) / 12  # body yaw inertia moment [kgm^2]
-fm = 0.0022  # friction coefficient between body & DC motor
-fw = 0  # friction coefficient between wheel & floor
-
-# DC Motor Parameters
-
-Jm = 1e-5  # DC motor inertia moment [kgm^2]
-Rm = 6.8327  # DC motor resistance [ƒ¶]
-Kb = 0.468  # DC motor back EMF constant [Vsec/rad]
-Kt = 0.3047  # DC motor torque constant [Nm/A]
-n = 1  # gear ration
-
-beta = n * Kt * Kb / Rm + fm
-alpha = n * Kt / Rm
-tmp = beta + fw
-
-
-# Parametre de la fonction :
-# t : le temps de simulation
-# x : l'état à un instant t
-# Kin : le gain de retour d'état
-# lcin : le prégain
-# yc : la consigne à un instant t : une fontion qui prend en argument les 2 suivant :
-# start_time : le temps de début de l'échelon
-# amplitude : l'amplitude de l'échelon en entrée
-
-# Paramère de sortie : xdot
-
-def xdot(t, xin, Kin, lcin, yc, start_time_input, amplitude):
-    # positionvector
-    theta = xin[0]  # angular position of thewheel
-    psi = xin[1]  # angular positionof the gyropode
-    # speedvector
-    dtheta = xin[2]  # angular speed of thewheel
-    dpsi = xin[3]  # angularspeed of the gyropode
-
-    # compute u
-    x = np.reshape(xin, (4, 1))
-    uth = -(np.dot(Kin, x)) + lcin * yc(t, start_time_input, amplitude)
-    uth = uth[0, 0]
-    u = np.clip(uth, -8.0, 8.0)
-
-    # computes the value of the x dot vector (state derivative)
-
-    i = 1 / Rm * (u + Kb * (dpsi - dtheta))
-
-    Ftheta = 2 * alpha * u - 2 * beta * (dtheta - dpsi) - 2 * fw * dtheta
-
-    Fpsi = -2 * alpha * u + 2 * beta * (dtheta - dpsi)
-
-    M1 = np.array([[(2 * m + M) * R ** 2 + 2 * Jw + 2 * n ** 2 * Jm, M * L * R * math.cos(psi) - 2 * n ** 2 * Jm],
-                   [M * L * R * math.cos(psi) - 2 * n ** 2 * Jm, M * L ** 2 + Jpsi + 2 * n ** 2 * Jm]])
-    M2 = np.array([[Ftheta + M * L * R * dpsi ** 2 * math.sin(psi)],
-                   [Fpsi + M * g * L * math.sin(psi)]])
-
-    var = np.linalg.solve(M1, M2)
-
-    xdot1 = dtheta
-    xdot2 = dpsi
-    xdot3 = var[0, 0]
-    xdot4 = var[1, 0]
-
-    return [xdot1, xdot2, xdot3, xdot4]
-
+plot_non_linear_euler = False
 
 # Fonction pour changer l'échelon d'entrée
 def consigne_temp(t, start_time, amplitude):
@@ -144,19 +65,19 @@ def consigne_temp(t, start_time, amplitude):
 
 
 def main():
-    E_11 = (2 * m + M) * R ** 2 + 2 * Jw + 2 * n ** 2 * Jm
-    E_12 = M * L * R - 2 * n ** 2 * Jm
-    E_22 = M * L ** 2 + Jpsi + 2 * n ** 2 * Jm
+    E_11 = (2 * nxt.m + nxt.M) * nxt.R ** 2 + 2 * nxt.Jw + 2 * nxt.n ** 2 * nxt.Jm
+    E_12 = nxt.M * nxt.L * nxt.R - 2 * nxt.n ** 2 * nxt.Jm
+    E_22 = nxt.M * nxt.L ** 2 + nxt.Jpsi + 2 * nxt.n ** 2 * nxt.Jm
     detE = E_11 * E_22 - E_12 ** 2
 
-    A1_32 = -g * M * L * E_12 / detE
-    A1_42 = g * M * L * E_11 / detE
-    A1_33 = -2 * (tmp * E_22 + beta * E_12) / detE
-    A1_43 = 2 * (tmp * E_12 + beta * E_11) / detE
-    A1_34 = 2 * beta * (E_22 + E_12) / detE
-    A1_44 = -2 * beta * (E_11 + E_12) / detE
-    B1_3 = alpha * (E_22 + E_12) / detE
-    B1_4 = -alpha * (E_11 + E_12) / detE
+    A1_32 = -nxt.g * nxt.M * nxt.L * E_12 / detE
+    A1_42 = nxt.g * nxt.M * nxt.L * E_11 / detE
+    A1_33 = -2 * (nxt.tmp * E_22 + nxt.beta * E_12) / detE
+    A1_43 = 2 * (nxt.tmp * E_12 + nxt.beta * E_11) / detE
+    A1_34 = 2 * nxt.beta * (E_22 + E_12) / detE
+    A1_44 = -2 * nxt.beta * (E_11 + E_12) / detE
+    B1_3 = nxt.alpha * (E_22 + E_12) / detE
+    B1_4 = -nxt.alpha * (E_11 + E_12) / detE
 
     # State-Space Matrix Calculation - MIMO model
 
@@ -165,9 +86,9 @@ def main():
     C1 = np.identity(4)
     D1 = np.zeros((4, 2))
 
-    I = m * W ** 2 / 2 + Jphi + (Jw + n ** 2 * Jm) * W ** 2 / (2 * R ** 2)
-    J = tmp * W ** 2 / (2 * R ** 2)
-    K = alpha * W / (2 * R)
+    I = nxt.m * nxt.W ** 2 / 2 + nxt.Jphi + (nxt.Jw + nxt.n ** 2 * nxt.Jm) * nxt.W ** 2 / (2 * nxt.R ** 2)
+    J = nxt.tmp * nxt.W ** 2 / (2 * nxt.R ** 2)
+    K = nxt.alpha * nxt.W / (2 * nxt.R)
 
     A2 = np.array([[0, 1], [0, -J / I]])
     B2 = np.array([[0, 0], [-K / I, K / I]])
@@ -229,7 +150,7 @@ def main():
     x0 = [0.0, 0.0, 0.0, 0.0]
     reference_amplitude = np.pi/5
     start_reference_time = 0
-    sol_bo = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
+    sol_bo = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
 
     t = sol_bo.t
     xout = sol_bo.y
@@ -248,12 +169,12 @@ def main():
         ax13.grid(True)
 
     if plot_compare_lin_nonlin_bo:
-        tspan = (0.0, 0.8)
+        tspan = (0.0, 0.7)
         t_eval = np.linspace(tspan[0], tspan[1], num=200)
         x0 = [0.0, 0.0, 0.0, 0.0]
         reference_amplitude = 1
         start_reference_time = 0
-        sol_bo = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
+        sol_bo = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(0, 1, consigne_temp, start_reference_time, reference_amplitude))
 
         t = sol_bo.t
         xout = sol_bo.y
@@ -463,7 +384,7 @@ def main():
     dc_gain = ctrl.dcgain(sysGCL)
     lc = 1 / dc_gain
 
-    # print(lc)
+    #print(lc)
 
     sysGCL_eps = ctrl.ss(ACL, BCL * lc, CCL, D)
     # print(sysGCL_eps)
@@ -564,7 +485,7 @@ def main():
     x0 = [0.0, 0.0, 0.0, 0.0]
     start_reference_time = 1
     start_amplitude = np.pi/5
-    sol = solve_ivp(xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K_robust, lc_robust, consigne_temp, start_reference_time, start_amplitude))
+    sol = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K_robust, lc_robust, consigne_temp, start_reference_time, start_amplitude))
 
     t = sol.t
     xout = sol.y
