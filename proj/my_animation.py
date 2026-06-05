@@ -81,7 +81,8 @@ class MyAnimation:
         elif frame == 0:
             for txt in self.ax.texts:
                 txt.set_visible(False)
-        # update the line plot:
+                
+        # Mise à jour des courbes à afficher:
         self.line1.set_xdata(self.t[:frame])
         self.line1.set_ydata(self.command[:frame])
         self.line2.set_xdata(self.t[:frame])
@@ -101,12 +102,6 @@ class MyAnimation:
         self.start_reference_time = time
         
         self.run_simulation()
-
-        #Il faut update la variable interne (privée) pour relancer la simulation
-        # faire print(dir(self.ani)) pour voir cette variable
-        # pas nécessaire avec nouvelle méthode
-
-        # self.ani.frame_seq = self.ani.new_frame_seq()
 
     # Gestion de la mise en pause (et fin d'animation)
     def toggle_pause(self, event):
