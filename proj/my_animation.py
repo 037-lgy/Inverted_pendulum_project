@@ -3,24 +3,56 @@ import numpy as np
 import matplotlib.animation as animation
 import NXTwaysim as nxt
 from scipy.integrate import solve_ivp
-import BE_script as be
+import math
 
+def consigne_temp(t, start_time, amplitude):
+    if t < start_time:
+        return 0
+    else:
+        return amplitude
 
 class MyAnimation:
-    def __init__(self, K, lc, reference, ref_time, ref_ampl):
+    def __init__(self, K, lc, ref_time, ref_ampl):
         self.K = K
         self.lc = lc
-        self.consigne_temp = reference
+
+        self.depassement = 0
 
         self.fig, self.ax = plt.subplots()
 
         self.tspan = (0.0, 2.0)
-        self.t_eval = np.linspace(self.tspan[0], self.tspan[1], num=200)
+        self.frame_count = 200 # Nombre d'images affichées
+        self.t_eval = np.linspace(self.tspan[0], self.tspan[1], num=self.frame_count)
         self.start_reference_time = ref_time
-        self.start_amplitude = ref_ampl
+        self.initial_amplitude = ref_ampl
 
         self.x0 = [0.0, 0.0, 0.0, 0.0]
-        self.sol = solve_ivp(nxt.xdot, self.tspan, self.x0, t_eval=self.t_eval, method='RK45', args=(self.K, self.lc, self.consigne_temp, self.start_reference_time, self.start_amplitude))
+
+        # Simule une première fois le système non linéaire avec valeurs passées en argument
+        self.run_simulation()
+        
+        # Initialise les courbes à afficher et la figure
+        self.line1 = self.ax.plot([0], [0], label='u')[0]
+        self.line2 = self.ax.plot([0], [0], label='theta')[0]
+        self.line3 = self.ax.plot([0], [0], label='psi')[0]
+        self.line4 = self.ax.plot([0], [0], label='yc')[0]
+        self.ax.set(xlim=[0, 2], ylim=[-8, 8], xlabel='Time [s]', ylabel='Amplitude')
+        self.ax.legend()
+
+        # Commence par rien n'afficher
+        self.paused = True
+        
+        # Pour permettre au premier déclenchement de se faire lors du premier appuie sur espace
+        self.ani = None
+
+
+        # Relier le fait de mettre sur pause et relancer avec espace
+        #Il faudra relier l'appel de update simu au changement d'interface graphique
+        self.fig.canvas.mpl_connect('key_press_event', self.toggle_pause)
+
+    # Simulation non linéaire du système définit par les attributs
+    def run_simulation(self):
+        self.sol = solve_ivp(nxt.xdot, self.tspan, self.x0, t_eval=self.t_eval, method='RK45', args=(self.K, self.lc, consigne_temp, self.start_reference_time, self.initial_amplitude))
 
         self.t = self.sol.t
         self.xout = self.sol.y
@@ -31,27 +63,24 @@ class MyAnimation:
 
         self.yc = []
         for i in range(len(self.t)):
-            yc_actuelle = be.consigne_temp(self.t[i], self.start_reference_time, self.start_amplitude)
+            yc_actuelle = consigne_temp(self.t[i], self.start_reference_time, self.initial_amplitude)
             x_actuelle = self.xout[:, i]
             utheo = -np.dot(self.K, x_actuelle) + yc_actuelle*self.lc
             utheo = np.clip(utheo, -8.0, 8.0)
             self.command[i] = utheo[0]
             self.yc.append(yc_actuelle)
 
-        self.line1 = self.ax.plot(self.t[0], self.command[0], label='u')[0]
-        self.line2 = self.ax.plot(self.t[0], self.theta_nlin[0], label='theta')[0]
-        self.line3 = self.ax.plot(self.t[0], self.psi_nlin[0], label='psi')[0]
-        self.line4 = self.ax.plot(self.t[0], self.yc[0], label='yc')[0]
-        self.ax.set(xlim=[0, 2], ylim=[-5, 5], xlabel='Time [s]', ylabel='Amplitude')
-        self.ax.legend()
-
-        self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=400, interval=10, repeat=False)
-        self.paused = False
-
-        self.fig.canvas.mpl_connect('button_press_event', self.toggle_pause)
-
-
+    # Fonction qui met à jour notre animation en temps réel
     def update(self, frame):
+        #Si la simulation se finit d'elle même
+        if frame == self.frame_count - 1:
+            depassement = (max(self.theta_nlin[:frame]) - max(self.yc[:frame]))*100
+            # Voir pour passer ça sur une autre fenêtre
+            self.ax.text(0, 9, f'Overshoot : {round(depassement,1)} %')
+            self.paused = True
+        elif frame == 0:
+            for txt in self.ax.texts:
+                txt.set_visible(False)
         # update the line plot:
         self.line1.set_xdata(self.t[:frame])
         self.line1.set_ydata(self.command[:frame])
@@ -64,102 +93,41 @@ class MyAnimation:
         return (self.line1, self.line2, self.line3, self.line4)
     
 
-    def reset_simu(self, K, lc, reference):
+    # Pour changer les paramètre de commande et relancer le solver
+    def update_simu(self, K, lc, time, ampl):
         self.K = K
         self.lc = lc
-        self.consigne_temp = reference
-        self.sol = solve_ivp(nxt.xdot, self.tspan, self.x0, t_eval=self.t_eval, method='RK45', args=(self.K, self.lc, self.consigne_temp, self.start_reference_time, self.start_amplitude))
+        self.initial_amplitude = ampl
+        self.start_reference_time = time
+        
+        self.run_simulation()
 
-        self.t = self.sol.t
-        self.xout = self.sol.y
-        self.theta_nlin = self.sol.y[0, :]
-        self.psi_nlin = self.sol.y[1, :]
+        #Il faut update la variable interne (privée) pour relancer la simulation
+        # faire print(dir(self.ani)) pour voir cette variable
+        # pas nécessaire avec nouvelle méthode
 
-        self.command = np.zeros(len(self.t))
+        # self.ani.frame_seq = self.ani.new_frame_seq()
 
-        self.yc = []
-        for i in range(len(self.t)):
-            yc_actuelle = be.consigne_temp(self.t[i], self.start_reference_time, self.start_amplitude)
-            x_actuelle = self.xout[:, i]
-            utheo = -np.dot(self.K, x_actuelle) + yc_actuelle*self.lc
-            utheo = np.clip(utheo, -8.0, 8.0)
-            self.command[i] = utheo[0]
-            self.yc.append(yc_actuelle)
-
-        self.line1 = self.ax.plot(self.t[0], self.command[0], label='u')[0]
-        self.line2 = self.ax.plot(self.t[0], self.theta_nlin[0], label='theta')[0]
-        self.line3 = self.ax.plot(self.t[0], self.psi_nlin[0], label='psi')[0]
-        self.line4 = self.ax.plot(self.t[0], self.yc[0], label='yc')[0]
-        self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=400, interval=10, repeat=False)
-
-    def toggle_pause(self, *args, **kwargs):
-        if self.paused:
+    # Gestion de la mise en pause (et fin d'animation)
+    def toggle_pause(self, event):
+        if event.key != ' ': #Mettre pause que si on appuie sur espace
+            return
+        if self.ani is None: #Pour la première itération
+            self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=self.frame_count, interval=10, repeat=False)
+            self.paused = False
+            self.fig.canvas.draw()
+        elif self.paused: 
+            # L'update de la simu ne doit être fait que lors su changement des sliders
+            # Il faudrait que si les sliders sont changés on reprend comme avant
+            # Et si on appuie sur une certaine touche, on recommence à zéro
+            self.update_simu(self.K, self.lc, self.start_reference_time, self.initial_amplitude)
+            self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=self.frame_count, interval=10, repeat=False)
             self.ani.resume()
+            self.paused = False
+            self.fig.canvas.draw()
         else:
             self.ani.pause()
-            self.reset_simu(np.array([[-5.5148, -34.12178, -1.7862, -2.8974]]), -5.5148, self.consigne_temp)
-        self.paused = not self.paused
+            self.paused = True
 
-
-# Frame : le nombre d'images qui sont générées
-# Intervale : le temps entre 2 frames en ms normalement mais dépend du pc
-# repeat : est-ce qu'on répète la simu quand toutes les frames ont été display
-# blit : qualité de l'image je crois
-
-# update : la fonction qui est appelée tous les intervalles
-
-
-# fig, ax = plt.subplots()
-
-# tspan = (0.0, 2.0)
-# t_eval = np.linspace(tspan[0], tspan[1], num=200)
-
-# K = np.array([[-5.5148, -34.12178, -1.7862, -2.8974]])
-# lc = -5.5148
-# start_reference_time = 0
-# start_amplitude = 1
-
-# x0 = [0.0, 0.0, 0.0, 0.0]
-# sol = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K, lc, be.consigne_temp, start_reference_time, start_amplitude))
-
-# t = sol.t
-# xout = sol.y
-# theta_nlin = sol.y[0, :]
-# psi_nlin = sol.y[1, :]
-
-# command = np.zeros(len(t))
-
-# yc = []
-# for i in range(len(t)):
-#     yc_actuelle = be.consigne_temp(t[i], start_reference_time, start_amplitude)
-#     x_actuelle = xout[:, i]
-#     utheo = -np.dot(K, x_actuelle) + yc_actuelle*lc
-#     utheo = np.clip(utheo, -8.0, 8.0)
-#     command[i] = utheo[0]
-#     yc.append(yc_actuelle)
-
-# line1 = ax.plot(t[0], command[0], label='u')[0]
-# line2 = ax.plot(t[0], theta_nlin[0], label='theta')[0]
-# line3 = ax.plot(t[0], psi_nlin[0], label='psi')[0]
-# line4 = ax.plot(t[0], yc[0], label='yc')[0]
-# ax.set(xlim=[0, 2], ylim=[-2.5, 2.5], xlabel='Time [s]', ylabel='Amplitude')
-# ax.legend()
-
-# def update(frame):
-#     # update the line plot:
-#     line1.set_xdata(t[:frame])
-#     line1.set_ydata(command[:frame])
-#     line2.set_xdata(t[:frame])
-#     line2.set_ydata(theta_nlin[:frame])
-#     line3.set_xdata(t[:frame])
-#     line3.set_ydata(psi_nlin[:frame])
-#     line4.set_xdata(t[:frame])
-#     line4.set_ydata(yc[:frame])
-#     return (line1, line2, line3, line4)
-
-
-# ani = animation.FuncAnimation(fig=fig, func=update, frames=400, interval=10, repeat=False)
-# plt.show()
-
-anim = MyAnimation(np.array([[-5.5148, -34.12178, -1.7862, -2.8974]]), -5.5148, be.consigne_temp, 0, 1)
-plt.show()
+#anim = MyAnimation(np.array([[-5.5148, -34.12178, -1.7862, -2.8974]]), -5.5148, consigne_temp, 0, 1)
+#plt.show()

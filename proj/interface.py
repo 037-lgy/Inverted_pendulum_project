@@ -1,30 +1,26 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QSlider, QVBoxLayout
 
-import numpy as np
-import matplotlib.pyplot as plt
-import control as ctrl
-from scipy import signal, integrate
-import math
-from control import matlab
-
-from scipy.integrate import solve_ivp
+import NXTwaysim as nxt
+import BE_script as be
 
 class Mainwindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('My simulation')
+        self.setWindowTitle("Simulations's interface")
         self.setGeometry(390, 150, 800, 500)
 
         layout = QVBoxLayout()
 
         self.button = QPushButton('Start simulation')
-        self.label = QLabel('Informative text area')
+        self.label1 = QLabel('K :')
+        self.label2 = QLabel('lc :')
 
         self.button.clicked.connect(self.button_clicked)
 
-        layout.addWidget(self.label)
+        layout.addWidget(self.label1)
+        layout.addWidget(self.label2)
         layout.addWidget(self.button)
 
         window = QWidget()
@@ -34,7 +30,7 @@ class Mainwindow(QMainWindow):
 
 
     def button_clicked(self):
-        self.label.setText('The button was clicked')
+        self.label1.setText('The button was clicked')
 
 
 def main():

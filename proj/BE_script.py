@@ -6,6 +6,7 @@ import math
 from control import matlab
 
 from scipy.integrate import solve_ivp
+import my_animation as mp
 
 import NXTwaysim as nxt
 
@@ -55,6 +56,8 @@ plot_compare_lin_nonlin_bf = False
 
 #Pas utilisée
 plot_non_linear_euler = False
+
+start_animation = True
 
 # Fonction pour changer l'échelon d'entrée
 def consigne_temp(t, start_time, amplitude):
@@ -548,6 +551,9 @@ def main():
     # non linear simulation (euler approximation)
     if plot_non_linear_euler:
         dt = 0.0001
+
+    if start_animation:
+        anim = mp.MyAnimation(K_robust, lc_robust, 0, 1)
 
     plt.show()
 
