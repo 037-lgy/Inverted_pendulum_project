@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import control as ctrl
 from scipy import signal
-import math
 from control import matlab
 
 from scipy.integrate import solve_ivp
@@ -460,7 +459,7 @@ def main():
         ax11.grid(True)
 
     # Improvement of K
-    wn = 8 # limite de stabilité avec wn = 15 et z = 0.8
+    wn = 1.7 # limite de stabilité avec wn = 15 et z = 0.8
     z = 0.8
     imag_part = ((4*wn**2-4*z**2*wn**2)**(1/2)) / 2
     p1 = complex(-wn*z, imag_part)
@@ -553,7 +552,7 @@ def main():
         dt = 0.0001
 
     if start_animation:
-        anim = mp.MyAnimation(K_robust, lc_robust, 0, 1)
+        anim = mp.MyAnimation(K_robust, lc_robust, 0, 5, 10)
 
     plt.show()
 
