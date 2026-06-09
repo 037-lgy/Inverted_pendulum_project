@@ -1,37 +1,41 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.animation as animation
 
+import matplotlib as mpl
+import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
+import matplotlib.path as mpath
 
+# Prepare the data for the PathPatch below.
+Path = mpath.Path
+codes, verts = zip(*[
+    (Path.MOVETO, [0.018, -0.11]),
+    (Path.CURVE4, [-0.031, -0.051]),
+    (Path.CURVE4, [-0.115, 0.073]),
+    (Path.CURVE4, [-0.03, 0.073]),
+    (Path.LINETO, [-0.011, 0.039]),
+    (Path.CURVE4, [0.043, 0.121]),
+    (Path.CURVE4, [0.075, -0.005]),
+    (Path.CURVE4, [0.035, -0.027]),
+    (Path.CLOSEPOLY, [0.018, -0.11])])
 
+artists = [
+    mpatches.Circle((0, 0), 0.1, ec="none"),
+    mpatches.Rectangle((-0.025, -0.05), 0.05, 0.1, ec="none"),
+    mpatches.Wedge((0, 0), 0.1, 30, 270, ec="none"),
+    mpatches.RegularPolygon((0, 0), 5, radius=0.1),
+    mpatches.Ellipse((0, 0), 0.2, 0.1),
+    mpatches.Arrow(-0.05, -0.05, 0.1, 0.1, width=0.1),
+    mpatches.PathPatch(mpath.Path(verts, codes), ec="none"),
+    mpatches.FancyBboxPatch((-0.025, -0.05), 0.05, 0.1, ec="none",
+                            boxstyle=mpatches.BoxStyle("Round", pad=0.02)),
+    mlines.Line2D([-0.06, 0.0, 0.1], [0.05, -0.05, 0.05], lw=5),
+]
 
-fig, ax = plt.subplots()
-t = np.linspace(0, 3, 40)
-g = -9.81
-v0 = 12
-z = g * t**2 / 2 + v0 * t
-
-v02 = 5
-z2 = g * t**2 / 2 + v02 * t
-
-scat = ax.scatter(t[0], z[0], c="b", s=5, label=f'v0 = {v0} m/s')
-line2 = ax.plot(t[0], z2[0], label=f'v0 = {v02} m/s')[0]
-ax.set(xlim=[0, 3], ylim=[-4, 10], xlabel='Time [s]', ylabel='Z [m]')
-ax.legend()
-
-
-def update(frame):
-    # for each frame, update the data stored on each artist.
-    x = t[:frame]
-    y = z[:frame]
-    # update the scatter plot:
-    data = np.stack([x, y]).T
-    scat.set_offsets(data)
-    # update the line plot:
-    line2.set_xdata(t[:frame])
-    line2.set_ydata(z2[:frame])
-    return (scat, line2)
-
-
-ani = animation.FuncAnimation(fig=fig, func=update, frames=40, interval=10, repeat=False)
+axs = plt.figure(figsize=(6, 6), layout="constrained").subplots(3, 3)
+for i, (ax, artist) in enumerate(zip(axs.flat, artists)):
+    artist.set(color=mpl.colormaps["hsv"](i / len(artists)))
+    ax.add_artist(artist)
+    ax.set(title=type(artist).__name__,
+           aspect=1, xlim=(-.2, .2), ylim=(-.2, .2))
+    #ax.set_axis_off()
 plt.show()

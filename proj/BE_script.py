@@ -9,6 +9,8 @@ import my_animation as mp
 
 import NXTwaysim as nxt
 
+import interface as it
+
 # Plot le lieu des racines en boucle ouverte
 plot_pmap = False
 
@@ -56,7 +58,9 @@ plot_compare_lin_nonlin_bf = False
 #Pas utilisée
 plot_non_linear_euler = False
 
-start_animation = True
+start_animation = False
+
+start_interface = True
 
 # Fonction pour changer l'échelon d'entrée
 def consigne_temp(t, start_time, amplitude):
@@ -553,6 +557,12 @@ def main():
 
     if start_animation:
         anim = mp.MyAnimation(K_robust, lc_robust, 0, 5, 10)
+
+    if start_interface:
+        app = it.QApplication([])
+        window = it.Mainwindow()
+        window.show()
+        it.sys.exit(app.exec()) #Start application
 
     plt.show()
 
