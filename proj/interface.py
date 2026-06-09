@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QSlider, QVBoxLayout, QHBoxLayout, QGraphicsOpacityEffect
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QSlider, QComboBox, QVBoxLayout, QHBoxLayout, QGraphicsOpacityEffect
 from PySide6.QtCore import Qt, QPropertyAnimation
 import matplotlib.pyplot as plt
 
@@ -146,6 +146,31 @@ class Mainwindow(QMainWindow):
 
         main_layout.addLayout(slider_layout)
 
+        bottom_layout = QHBoxLayout()
+
+        bottom_text_layout = QVBoxLayout()
+        self.label3 = QLabel('<b><u>Press spacebar : pause/play<b><u>')
+        self.label3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label4 = QLabel("<b><u>Press 'a' : restart simulation<b><u>")
+        self.label4.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        bottom_text_layout.addWidget(self.label3)
+        bottom_text_layout.addWidget(self.label4)
+
+        self.label5 = QLabel('Plotting type :')
+        self.label5.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
+
+        self.box = QComboBox()
+        self.box.addItem('Moving points')
+        self.box.addItem('Moving plots')
+        self.box.currentTextChanged.connect(self.value_changed_plot)
+
+        bottom_layout.addLayout(bottom_text_layout)
+        bottom_layout.addWidget(self.label5)
+        bottom_layout.addWidget(self.box, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        main_layout.addLayout(bottom_layout)
+
         self.button = QPushButton('Start simulation')
         self.button.clicked.connect(self.button_clicked)
 
@@ -155,20 +180,12 @@ class Mainwindow(QMainWindow):
         self.opacity_effect = QGraphicsOpacityEffect(self.label2)
         self.label2.setGraphicsEffect(self.opacity_effect)
 
-        self.label3 = QLabel('<b><u>Press spacebar : pause/play<b><u>')
-        self.label3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label4 = QLabel("<b><u>Press 'a' : restart simulation<b><u>")
-        self.label4.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
         # Animation pour faire disparaitre le texte de mise à jour des paramètres
         self.fade_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
         self.fade_animation.setDuration(2000)
         self.fade_animation.setStartValue(1.0)
         self.fade_animation.setEndValue(0.0)
 
-
-        main_layout.addWidget(self.label3)
-        main_layout.addWidget(self.label4)
         main_layout.addWidget(self.button)
         main_layout.addWidget(self.label2)
 
@@ -183,6 +200,7 @@ class Mainwindow(QMainWindow):
         self.wn = 5.0
         self.z = 0.69
         self.tf = 5
+        self.moving_points = True
 
 
     def button_clicked(self):
@@ -192,10 +210,10 @@ class Mainwindow(QMainWindow):
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
 
         if not self.first_input:
-            self.anim.update_simu(K, lc, 0, self.reference, self.tf)
+            self.anim.update_simu(K, lc, 0, self.reference, self.tf, self.moving_points)
             self.label2.setText('Parameters have been updated, ready for next restart !!!')
         else:
-            self.anim = ma.MyAnimation(K, lc, 0, self.reference, self.tf)
+            self.anim = ma.MyAnimation(K, lc, 0, self.reference, self.tf, self.moving_points)
             self.button.setText('Update inputs')
             self.label2.setText('Simulation started !')
             self.first_input = False
@@ -217,6 +235,12 @@ class Mainwindow(QMainWindow):
     def value_changed_tf(self, value):
         self.tf = value
         self.label_tf_value.setText(str(self.tf))
+
+    def value_changed_plot(self, value):
+        if value == 'Moving points':
+            self.moving_points = True
+        else:
+            self.moving_points = False
 
 
 def main():

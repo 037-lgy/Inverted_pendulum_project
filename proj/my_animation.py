@@ -47,7 +47,7 @@ R = 0.042
 r = 0.01
 
 class MyAnimation:
-    def __init__(self, K, lc, ref_time, ref_ampl, time):
+    def __init__(self, K, lc, ref_time, ref_ampl, time, mov_points):
         self.K = K
         self.lc = lc
 
@@ -63,14 +63,23 @@ class MyAnimation:
 
         self.x0 = [0.0, 0.0, 0.0, 0.0]
 
+        self.update_point = mov_points
+        self.next_moving_type = self.update_point
+
         # Simule une première fois le système non linéaire avec valeurs passées en argument
         self.run_simulation()
         
         # Initialise les courbes à afficher et la figure
-        self.line1 = self.ax.plot([0], [0], label='u')[0]
-        self.line2 = self.ax.plot([0], [0], label='theta')[0]
-        self.line3 = self.ax.plot([0], [0], label='psi')[0]
-        self.line4 = self.ax.plot([0], [0], label='yc')[0]
+        self.line1 = self.ax.plot([0], [0], label='u', color='b', linewidth=0.5)[0]
+        self.line2 = self.ax.plot([0], [0], label='theta', color='r', linewidth=0.5)[0]
+        self.line3 = self.ax.plot([0], [0], label='psi', color='g', linewidth=0.5)[0]
+        self.line4 = self.ax.plot([0], [0], label='yc', color='y', linewidth=0.5)[0]
+        
+        self.point1 = self.ax.plot([], [], ls="none", marker="o")[0]
+        self.point2 = self.ax.plot([], [], ls="none", marker='o', color='r')[0]
+        self.point3 = self.ax.plot([], [], ls="none", marker='o', color='g')[0]
+        self.point4 = self.ax.plot([], [], ls="none", marker='o', color='y')[0]
+        
         self.ax.set(xlim=[0, self.tspan[1]], ylim=[-1*max(8,-self.initial_amplitude+1), max(8,self.initial_amplitude+1)], xlabel='Time [s]', ylabel='Amplitude')
         self.ax.legend()
 
@@ -107,6 +116,8 @@ class MyAnimation:
             self.command[i] = utheo[0]
             self.yc.append(yc_actuelle)
 
+        self.update_point = self.next_moving_type
+
     # Fonction qui met à jour notre animation en temps réel
     def update(self, frame):
         #Si la simulation se finit d'elle même
@@ -122,25 +133,50 @@ class MyAnimation:
                 txt.set_visible(False)     
 
         # Mise à jour des courbes à afficher:
-        self.line1.set_xdata(self.t[:frame])
-        self.line1.set_ydata(self.command[:frame])
-        self.line2.set_xdata(self.t[:frame])
-        self.line2.set_ydata(self.theta_nlin[:frame])
-        self.line3.set_xdata(self.t[:frame])
-        self.line3.set_ydata(self.psi_nlin[:frame])
-        self.line4.set_xdata(self.t[:frame])
-        self.line4.set_ydata(self.yc[:frame])
-        return (self.line1, self.line2, self.line3, self.line4)
+
+        if self.update_point:
+            if frame == 0:
+                self.line1.set_xdata(self.t[:self.frame_count])
+                self.line1.set_ydata(self.command[:self.frame_count])
+                self.line2.set_xdata(self.t[:self.frame_count])
+                self.line2.set_ydata(self.theta_nlin[:self.frame_count])
+                self.line3.set_xdata(self.t[:self.frame_count])
+                self.line3.set_ydata(self.psi_nlin[:self.frame_count])
+                self.line4.set_xdata(self.t[:self.frame_count])
+                self.line4.set_ydata(self.yc[:self.frame_count])
+
+
+            self.point1.set_xdata([self.t[frame]])
+            self.point1.set_ydata([self.command[frame]])
+            self.point2.set_xdata([self.t[frame]])
+            self.point2.set_ydata([self.theta_nlin[frame]])
+            self.point3.set_xdata([self.t[frame]])
+            self.point3.set_ydata([self.psi_nlin[frame]])
+            self.point4.set_xdata([self.t[frame]])
+            self.point4.set_ydata([self.yc[frame]])
+        
+        else:
+            self.line1.set_xdata(self.t[:frame])
+            self.line1.set_ydata(self.command[:frame])
+            self.line2.set_xdata(self.t[:frame])
+            self.line2.set_ydata(self.theta_nlin[:frame])
+            self.line3.set_xdata(self.t[:frame])
+            self.line3.set_ydata(self.psi_nlin[:frame])
+            self.line4.set_xdata(self.t[:frame])
+            self.line4.set_ydata(self.yc[:frame])
+
+        return (self.line1, self.line2, self.line3, self.line4, self.point1, self.point2, self.point3, self.point4)
     
 
     # Pour changer les paramètre de commande et relancer le solver
-    def update_simu(self, K, lc, ref_time, ampl, end_time):
+    def update_simu(self, K, lc, ref_time, ampl, end_time, mov_points):
         self.K = K
         self.lc = lc
         self.initial_amplitude = ampl
         self.start_reference_time = ref_time
         self.tspan = (0.0, end_time)
         self.t_eval = np.linspace(self.tspan[0], self.tspan[1], num=self.frame_count)
+        self.next_moving_type = mov_points
 
     # Gestion de la mise en pause et recommencement (et fin d'animation)
     def toggle_pause(self, event):
@@ -163,7 +199,16 @@ class MyAnimation:
                 # sinon cela continue comme avant, voir pour améliorer tout ça
                 self.paused = False
                 self.ax.set(xlim=[0, self.tspan[1]], ylim=[-1*max(8,-self.initial_amplitude+1), max(8,self.initial_amplitude+1)], xlabel='Time [s]', ylabel='Amplitude')
-        
+                
+                self.line1.set_data([], [])
+                self.line2.set_data([], [])
+                self.line3.set_data([], [])
+                self.line4.set_data([], [])
+                self.point1.set_data([], [])
+                self.point2.set_data([], [])
+                self.point3.set_data([], [])
+                self.point4.set_data([], [])
+                
                 self.run_simulation()
                 self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=self.frame_count, interval=10, repeat=False, blit=True)
                 self.fig.canvas.draw()
