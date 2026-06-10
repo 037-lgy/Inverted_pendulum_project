@@ -10,11 +10,19 @@ g = 9.81  # gravity acceleration [m/sec^2]
 # Lego Mindstorms EV3 Parameters
 m = 0.03  # wheel weight [kg] valor inicial 0.03
 R = 0.042  # wheel radius [m]  valor inicial 0.04
-Jw = m * R ** 2 / 2  # wheel inertia moment [kgm^2]
-M = 0.67  # body weight [kg]
-W = 0.165  # body width [m]
-D = 0.05  # body depth [m]
-H = 0.152  # body height [m]
+Jw = m * R**(2) / 2  # wheel inertia moment [kgm^2]
+
+####################################################################
+M = 0.8  # body weight [kg] 
+W = 0.042  # body width [m]
+D = 0.055  # body depth [m]
+H = 0.160  # body height [m]
+# M = 0.67  # body weight [kg] 
+# W = 0.165  # body width [m]
+# D = 0.05  # body depth [m]
+# H = 0.152  # body height [m]
+
+####################################################################
 L = H / 2  # distance of the center of mass from the wheel axle [m]
 Jpsi = M * L ** 2 / 3  # body pitch inertia moment [kgm^2]
 Jphi = M * (W ** 2 + D ** 2) / 12  # body yaw inertia moment [kgm^2]
@@ -24,9 +32,14 @@ fw = 0  # friction coefficient between wheel & floor
 # DC Motor Parameters
 
 Jm = 1e-5  # DC motor inertia moment [kgm^2]
-Rm = 6.8327  # DC motor resistance [ƒ¶]
+
+###################################################################
+#Rm = 6.8327  # DC motor resistance [ƒ¶]
+Rm = 6.69  # DC motor resistance [ƒ¶]
 Kb = 0.468  # DC motor back EMF constant [Vsec/rad]
-Kt = 0.3047  # DC motor torque constant [Nm/A]
+###################################################################
+Kt = 0.317  # DC motor torque constant [Nm/A]
+###################################################################
 n = 1  # gear ration
 
 beta = n * Kt * Kb / Rm + fm

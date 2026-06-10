@@ -102,17 +102,17 @@ class Mainwindow(QMainWindow):
         self.z_title = QLabel('<b>z<b>')
         self.z_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.label_max_z = QLabel('1.0')
+        self.label_max_z = QLabel('2.0')
         self.label_max_z.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.slider_z = QSlider(Qt.Orientation.Vertical)
-        self.slider_z.setRange(0, 100)
+        self.slider_z.setRange(10, 200)
         self.slider_z.setValue(69)
         self.slider_z.valueChanged.connect(self.value_changed_z)
         self.slider_z.setTickPosition(QSlider.TickPosition.TicksLeft)
         self.slider_z.setTickInterval(10)
 
-        self.label_min_z = QLabel('0.0')
+        self.label_min_z = QLabel('0.1')
         self.label_min_z.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
 
@@ -140,7 +140,7 @@ class Mainwindow(QMainWindow):
 
         self.slider_tf = QSlider(Qt.Orientation.Vertical)
         self.slider_tf.setRange(0, 40)
-        self.slider_tf.setValue(5)
+        self.slider_tf.setValue(3)
         self.slider_tf.valueChanged.connect(self.value_changed_tf)
         self.slider_tf.setTickPosition(QSlider.TickPosition.TicksLeft)
         self.slider_tf.setTickInterval(5)
@@ -155,7 +155,7 @@ class Mainwindow(QMainWindow):
 
         slider_layout.addLayout(tf_block)
 
-        self.label_tf_value = QLabel('0')
+        self.label_tf_value = QLabel('3')
         self.label_tf_value.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
 
         slider_layout.addWidget(self.label_tf_value)
@@ -170,7 +170,7 @@ class Mainwindow(QMainWindow):
         bottom_text_layout = QVBoxLayout()
         self.label3 = QLabel('<b><u>Press spacebar : pause/play<b><u>')
         self.label3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label4 = QLabel("<b><u>Press 'a' : restart simulation<b><u>")
+        self.label4 = QLabel("<b><u>Press 'a' : start/restart simulation<b><u>")
         self.label4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Ajout des zones de texte au layout
@@ -184,7 +184,8 @@ class Mainwindow(QMainWindow):
         # Création combobox à droite de zone de texte
         self.box = QComboBox()
         self.box.addItem('Moving points')
-        self.box.addItem('Moving plots')
+        self.box.addItem('Moving curves')
+        self.box.addItem('Curve filling')
         self.box.currentTextChanged.connect(self.value_changed_plot)
 
         # Ajout dans le layout des 2 textes et de la combobox (+ son texte)
@@ -230,8 +231,8 @@ class Mainwindow(QMainWindow):
         self.reference = 0
         self.wn = 5.0
         self.z = 0.69
-        self.tf = 5
-        self.moving_points = True
+        self.tf = 3
+        self.plot_type = 'Moving points'
 
 
     def button_clicked(self):
@@ -242,10 +243,10 @@ class Mainwindow(QMainWindow):
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
 
         if not self.first_input:
-            self.anim.update_simu(K, lc, 0, self.reference, self.tf, self.moving_points)
+            self.anim.update_simu(K, lc, 0, self.reference, self.tf, self.plot_type)
             self.label2.setText('Parameters have been updated, ready for next restart !!!')
         else:
-            self.anim = ma.MyAnimation(K, lc, 0, self.reference, self.tf, self.moving_points)
+            self.anim = ma.MyAnimation(K, lc, 0, self.reference, self.tf, self.plot_type)
             self.button.setText('Update inputs')
             self.label2.setText('Simulation started !')
             self.first_input = False
@@ -277,6 +278,7 @@ class Mainwindow(QMainWindow):
             self.moving_points = True
         else:
             self.moving_points = False
+        self.plot_type = value
 
 
 def main():

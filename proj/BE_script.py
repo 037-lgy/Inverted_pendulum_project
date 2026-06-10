@@ -53,14 +53,14 @@ plot_non_linear = False
 
 # Plot la comparaison de theta/psi/u entre le modèle linéaire et non linéaire
 # avec un échelon en entrée pour les valeurs de K et lc calculées au début
-plot_compare_lin_nonlin_bf = False
+plot_compare_lin_nonlin_bf = True
 
 #Pas utilisée
 plot_non_linear_euler = False
 
 start_animation = False
 
-start_interface = True
+start_interface = False
 
 # Fonction pour changer l'échelon d'entrée
 def consigne_temp(t, start_time, amplitude):
@@ -71,7 +71,7 @@ def consigne_temp(t, start_time, amplitude):
 
 
 def main():
-    E_11 = (2 * nxt.m + nxt.M) * nxt.R ** 2 + 2 * nxt.Jw + 2 * nxt.n ** 2 * nxt.Jm
+    E_11 = (2 * nxt.m + nxt.M) * nxt.R**(2) + 2 * nxt.Jw + 2 * nxt.n**(2) * nxt.Jm
     E_12 = nxt.M * nxt.L * nxt.R - 2 * nxt.n ** 2 * nxt.Jm
     E_22 = nxt.M * nxt.L ** 2 + nxt.Jpsi + 2 * nxt.n ** 2 * nxt.Jm
     detE = E_11 * E_22 - E_12 ** 2
@@ -332,7 +332,7 @@ def main():
     TFCL = ctrl.ss2tf(ACL, BCL, CCL, D)
     numGCL = TFCL.num_array[0, 0]
     denGCL = TFCL.den_array[0, 0]
-    for i in range(4):
+    for i in range(3):
         if 0.0005 > numGCL[i] > -0.0005:
             numGCL[i] = 0
         if 0.0005 > denGCL[i] > -0.0005:
@@ -463,8 +463,8 @@ def main():
         ax11.grid(True)
 
     # Improvement of K
-    wn = 1.7 # limite de stabilité avec wn = 15 et z = 0.8
-    z = 0.8
+    wn = 0.6 # limite de stabilité avec wn = 15 et z = 0.8
+    z = 0.99
     imag_part = ((4*wn**2-4*z**2*wn**2)**(1/2)) / 2
     p1 = complex(-wn*z, imag_part)
     p2 = np.conj(p1)
@@ -483,15 +483,15 @@ def main():
 
     dc_gain_robust = ctrl.dcgain(sysGCL_robust)
     lc_robust = 1 / dc_gain_robust
-    #print(K_robust)
-    #print(lc_robust)
+    print(K_robust)
+    print(lc_robust)
     tspan = (0.0, 2.0)
     t_eval = np.linspace(tspan[0], tspan[1], num=200)
 
     x0 = [0.0, 0.0, 0.0, 0.0]
     start_reference_time = 1
     start_amplitude = np.pi/5
-    sol = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K_robust, lc_robust, consigne_temp, start_reference_time, start_amplitude))
+    sol = solve_ivp(nxt.xdot, tspan, x0, t_eval=t_eval, method='RK45', args=(K, lc, consigne_temp, start_reference_time, start_amplitude))
 
     t = sol.t
     xout = sol.y
@@ -537,11 +537,12 @@ def main():
         tout, y, x = signal.lsim(signal_sys, U=yc, T=t)
 
         x = np.transpose(x)
+        theta_lin_bf = x[0,:]
         psi_lin_bf = x[1,:]
         u = np.array([-1 * np.dot(K, x)] + lc * yc)
         u = np.reshape(u, np.shape(tout))
 
-        ax13.plot(tout, y, '--',label='theta_lin')
+        ax13.plot(tout, theta_lin_bf, '--',label='theta_lin')
         ax13.plot(tout, psi_lin_bf, '--', label='psi_lin')
         ax13.plot(tout, u, '--', label='u_lin')
 
