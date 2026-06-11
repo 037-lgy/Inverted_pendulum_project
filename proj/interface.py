@@ -170,7 +170,7 @@ class Mainwindow(QMainWindow):
         bottom_text_layout = QVBoxLayout()
         self.label3 = QLabel('<b><u>Press spacebar : pause/play<b><u>')
         self.label3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label4 = QLabel("<b><u>Press 'a' : start/restart simulation<b><u>")
+        self.label4 = QLabel("<b><u>Press 'a' : reset simulation<b><u>")
         self.label4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Ajout des zones de texte au layout
