@@ -76,7 +76,7 @@ class MyAnimation:
         self.fig, self.ax = plt.subplots()
 
         # Figure pour le robot qui bouge
-        self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
+        self.fig2, self.ax2 = plt.subplots(figsize=(6, 4))
 
         # Temps de début et fin d'animation
         self.tspan = (0.0, time)

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushB
 from PySide6.QtCore import Qt, QPropertyAnimation
 import matplotlib.pyplot as plt
 
-import my_animation as ma
+import animation as ma
 
 class Mainwindow(QMainWindow):
     def __init__(self):
@@ -11,7 +11,7 @@ class Mainwindow(QMainWindow):
 
         # Création de la fenêtre de simulation
         self.setWindowTitle("Simulations's interactive interface")
-        self.setGeometry(0, 150, 450, 350)
+        self.setGeometry(0, 0, 400, 300)
 
         # Création du layout principal verticatal, qui contiendra tous les autres
         main_layout = QVBoxLayout()
@@ -35,18 +35,18 @@ class Mainwindow(QMainWindow):
         self.yc_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Valeur max du slider yc
-        self.label_max_yc = QLabel('10')
+        self.label_max_yc = QLabel('30')
         self.label_max_yc.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Création du slider de yc
         self.slider_yc = QSlider(Qt.Orientation.Vertical)
-        self.slider_yc.setRange(-10, 10)
+        self.slider_yc.setRange(-30, 30)
         self.slider_yc.setValue(0)
         self.slider_yc.valueChanged.connect(self.value_changed_yc)
         self.slider_yc.setTickPosition(QSlider.TickPosition.TicksLeft)
 
         # Valeur min du slider yc
-        self.label_min_yc = QLabel('-10')
+        self.label_min_yc = QLabel('-30')
         self.label_min_yc.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Mise à jour du layout vertical, dans l'ordre, de tous les widgets

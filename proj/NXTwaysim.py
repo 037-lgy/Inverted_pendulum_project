@@ -93,3 +93,39 @@ def xdot(t, xin, Kin, lcin, yc, start_time_input, amplitude):
     xdot4 = var[1, 0]
 
     return [xdot1, xdot2, xdot3, xdot4]
+
+def xdot_segment(t, xin, Kin, lcin, yc):
+    # positionvector
+    theta = xin[0]  # angular position of thewheel
+    psi = xin[1]  # angular positionof the gyropode
+    # speedvector
+    dtheta = xin[2]  # angular speed of thewheel
+    dpsi = xin[3]  # angularspeed of the gyropode
+
+    # compute u
+    x = np.reshape(xin, (4, 1))
+    uth = -(np.dot(Kin, x)) + lcin * yc
+    uth = uth[0, 0]
+    u = np.clip(uth, -8.0, 8.0)
+
+    # computes the value of the x dot vector (state derivative)
+
+    i = 1 / Rm * (u + Kb * (dpsi - dtheta))
+
+    Ftheta = 2 * alpha * u - 2 * beta * (dtheta - dpsi) - 2 * fw * dtheta
+
+    Fpsi = -2 * alpha * u + 2 * beta * (dtheta - dpsi)
+
+    M1 = np.array([[(2 * m + M) * R ** 2 + 2 * Jw + 2 * n ** 2 * Jm, M * L * R * math.cos(psi) - 2 * n ** 2 * Jm],
+                   [M * L * R * math.cos(psi) - 2 * n ** 2 * Jm, M * L ** 2 + Jpsi + 2 * n ** 2 * Jm]])
+    M2 = np.array([[Ftheta + M * L * R * dpsi ** 2 * math.sin(psi)],
+                   [Fpsi + M * g * L * math.sin(psi)]])
+
+    var = np.linalg.solve(M1, M2)
+
+    xdot1 = dtheta
+    xdot2 = dpsi
+    xdot3 = var[0, 0]
+    xdot4 = var[1, 0]
+
+    return [xdot1, xdot2, xdot3, xdot4]
