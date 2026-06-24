@@ -11,9 +11,8 @@ class Mainwindow:
         
         # Configuration de la fenêtre de simulation
         self.root.title("Simulations's interactive interface")
-        self.root.geometry("400x300") # Légèrement élargi pour s'adapter aux polices Linux natives
+        self.root.geometry("500x400")
         
-        # Variables internes (initialisation identique)
         self.anim = None
         self.first_input = True
         self.reference = 0
@@ -22,12 +21,13 @@ class Mainwindow:
         self.tf = 3
         self.plot_type = 'Moving points'
         
-        # --- main_layout (Equivalent QVBoxLayout) ---
+        # main_layout
+
         # Texte en haut, au milieu
         self.label = tk.Label(root, text="Configure your parameters below :")
         self.label.pack(pady=10)
 
-        # --- slider_layout (Equivalent QHBoxLayout) ---
+        # slider_layout
         slider_frame = tk.Frame(root)
         slider_frame.pack(pady=10, fill="x", padx=10)
         
@@ -36,15 +36,13 @@ class Mainwindow:
         for c in range(8):
             slider_frame.grid_columnconfigure(c, weight=1)
 
-        # --- 1. Bloc yc ---
+        # Bloc yc
         self.yc_title = tk.Label(slider_frame, text="yc", font=("Arial", 10, "bold"))
         self.yc_title.grid(row=0, column=0, sticky="n")
         
         self.label_max_yc = tk.Label(slider_frame, text="30", fg="grey")
         self.label_max_yc.grid(row=1, column=0)
         
-        # En Tkinter, un Scale vertical va du haut (valeur min) vers le bas (valeur max). 
-        # Pour inverser et avoir le max en haut, on met from_=30 et to=-30
         self.slider_yc = tk.Scale(slider_frame, from_=30, to=-30, orient="vertical", length=150, command=self.value_changed_yc)
         self.slider_yc.set(0)
         self.slider_yc.grid(row=2, column=0, pady=5)
@@ -55,7 +53,7 @@ class Mainwindow:
         self.label_yc_value = tk.Label(slider_frame, text="0", font=("Arial", 10, "bold"))
         self.label_yc_value.grid(row=2, column=1, padx=5)
 
-        # --- 2. Bloc wn ---
+        # Bloc wn
         self.wn_title = tk.Label(slider_frame, text="wn", font=("Arial", 10, "bold"))
         self.wn_title.grid(row=0, column=2, sticky="n")
         
@@ -72,7 +70,7 @@ class Mainwindow:
         self.label_wn_value = tk.Label(slider_frame, text="5.0", font=("Arial", 10, "bold"))
         self.label_wn_value.grid(row=2, column=3, padx=5)
 
-        # --- 3. Bloc z ---
+        # Bloc z
         self.z_title = tk.Label(slider_frame, text="z", font=("Arial", 10, "bold"))
         self.z_title.grid(row=0, column=4, sticky="n")
         
@@ -89,8 +87,8 @@ class Mainwindow:
         self.label_z_value = tk.Label(slider_frame, text="0.69", font=("Arial", 10, "bold"))
         self.label_z_value.grid(row=2, column=5, padx=5)
 
-        # --- 4. Bloc tf ---
-        self.tf_title = tk.Label(slider_frame, text="tf", font=("Arial", 10, "bold"))
+        # Bloc tspan
+        self.tf_title = tk.Label(slider_frame, text="tspan", font=("Arial", 10, "bold"))
         self.tf_title.grid(row=0, column=6, sticky="n")
         
         self.label_max_tf = tk.Label(slider_frame, text="40", fg="grey")
@@ -107,11 +105,11 @@ class Mainwindow:
         self.label_tf_value.grid(row=2, column=7, padx=5)
 
 
-        # --- bottom_layout (Equivalent QHBoxLayout) ---
+        # bottom_layout
         bottom_frame = tk.Frame(root)
         bottom_frame.pack(pady=15, fill="x", padx=20)
         
-        # Zone de texte gauche (Equivalent bottom_text_layout QVBoxLayout)
+        # Zone de texte gauche
         bottom_text_frame = tk.Frame(bottom_frame)
         bottom_text_frame.pack(side="left")
         
@@ -120,7 +118,7 @@ class Mainwindow:
         self.label4 = tk.Label(bottom_text_frame, text="Press 'a' : reset simulation", font=("Arial", 9, "underline", "bold"))
         self.label4.pack(anchor="w")
         
-        # Combobox à droite (Equivalent QComboBox)
+        # Combobox à droite
         self.box = ttk.Combobox(bottom_frame, values=['Moving points', 'Moving curves', 'Curve filling'], state="readonly")
         self.box.set('Moving points')
         self.box.bind("<<ComboboxSelected>>", self.value_changed_plot)
@@ -130,14 +128,14 @@ class Mainwindow:
         self.label5.pack(side="right", padx=5)
 
 
-        # --- Bouton et Zone de message (Mise à jour des paramètres) ---
+        # Bouton et Zone de message
         self.button = tk.Button(root, text="Start simulation", command=self.button_clicked, bg="#4C729F", fg="white", font=("Arial", 10, "bold"))
         self.button.pack(pady=10, ipadx=10, ipady=3)
         
         self.label2 = tk.Label(root, text="", fg="darkgreen")
         self.label2.pack()
 
-        # Gestion de l'id de l'animation de fadeout de Tkinter
+        # Gestion de l'id de l'animation de fadeout
         self.fade_job = None
 
     def button_clicked(self):
@@ -149,7 +147,6 @@ class Mainwindow:
         # Réinitialisation de l'affichage de la couleur du texte (opacité 1.0)
         self.label2.config(fg="darkgreen")
 
-        # Calcul exact de la logique métier
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
 
         if not self.first_input:
@@ -165,7 +162,7 @@ class Mainwindow:
         # Lancement de l'animation de disparition du texte (Fading de 2000 ms)
         self.fade_out(2000)
 
-    # Fonctions de changement de valeurs (Mêmes opérations mathématiques sur les sliders)
+    # Fonctions de changement de valeurs
     def value_changed_yc(self, value):
         self.reference = int(value)
         self.label_yc_value.config(text=str(self.reference))
@@ -191,17 +188,16 @@ class Mainwindow:
         self.plot_type = value
 
     def fade_out(self, duration_ms):
-        """Simule l'animation PySide6 de fading (QPropertyAnimation) en modifiant 
-        la couleur du texte vers le blanc du fond de la fenêtre de façon itérative."""
+        """Simule l'animation de fading en modifiant la couleur du texte vers le blanc du fond de la fenêtre de façon itérative."""
         steps = 20
         delay = duration_ms // steps
         
         def run_fade(step=0):
             if step <= steps:
                 # Calcul de la transition de couleur du vert foncé vers le gris/blanc de fond
-                # Rapprochement progressif vers le gris par défaut de Tkinter (#f0f0f0 sous Windows/Linux standard)
+                # Rapprochement progressif vers le gris par défaut de Tkinter
                 alpha = step / steps
-                # On fait simplement disparaître le texte à la fin
+                # On fait disparaître le texte à la fin
                 if step == steps:
                     self.label2.config(text="")
                 else:
