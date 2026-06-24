@@ -22,7 +22,7 @@ plot_non_linear_bo = False
 
 # Plot la comparaison de la sortie theta entre le modèle
 # linéaire et non linéaire, sur un temps court avec un échelon unitaire entrée
-plot_compare_lin_nonlin_bo = False
+plot_compare_lin_nonlin_bo = True
 
 # Plot la réponse à un impulsion
 plot_impulse_bo = False
@@ -53,7 +53,7 @@ plot_non_linear = False
 
 # Plot la comparaison de theta/psi/u entre le modèle linéaire et non linéaire
 # avec un échelon en entrée pour les valeurs de K et lc calculées au début
-plot_compare_lin_nonlin_bf = True
+plot_compare_lin_nonlin_bf = False
 
 #Pas utilisée
 plot_non_linear_euler = False
@@ -316,8 +316,9 @@ def main():
     p3 = complex(-wn * z, imag_part)
     p4 = np.conj(p3)
     p_d = [p1, p2, p3, p4]
+    p_d = [-1, -2, -6.1443, -195.4279]
     K_p = matlab.place(A, B, p_d)
-    #print(K_p)
+    print(K_p)
 
     # Closed loop system
 
@@ -362,7 +363,7 @@ def main():
 
     # print(poles_cl)
     # print(np.linalg.eig(ACL))
-    # print(ctrl.damp(sysGCL)
+    # print(ctrl.damp(sysGCL))
 
     if plot_step_bf:
         dt = 0.001
@@ -483,8 +484,8 @@ def main():
 
     dc_gain_robust = ctrl.dcgain(sysGCL_robust)
     lc_robust = 1 / dc_gain_robust
-    print(K_robust)
-    print(lc_robust)
+    #print(K_robust)
+    #print(lc_robust)
     tspan = (0.0, 2.0)
     t_eval = np.linspace(tspan[0], tspan[1], num=200)
 

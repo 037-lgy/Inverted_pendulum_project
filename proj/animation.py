@@ -65,7 +65,7 @@ R = 0.042
 r = 0.01
 
 class MyAnimation:
-    def __init__(self, K, lc, ref_time, ref_ampl, time, mov_points):
+    def __init__(self, K, lc, ref_ampl, time, mov_points):
         # Gain retour d'état
         self.K = K
 
@@ -123,6 +123,8 @@ class MyAnimation:
         self.ax.set(xlim=[0, self.time], ylim=[-8, 8], xlabel='Time [s]', ylabel='Amplitude')
         self.ax.grid(True)
         self.ax.legend()
+
+        self.moving_type = 'Moving curves'
 
         self.round = np.arange(0, 2*np.pi, 0.1)
         self.A_init = [self.y, 0]
@@ -188,38 +190,49 @@ class MyAnimation:
     def update(self, frame):
         if not self.started:
             return (self.line1, self.line2, self.line3, self.line4)
-        self.line1.set_xdata(self.t_history)
-        self.line1.set_ydata(self.u_history)
-        self.line2.set_xdata(self.t_history)
-        self.line2.set_ydata(self.theta_history)
-        self.line3.set_xdata(self.t_history)
-        self.line3.set_ydata(self.psi_history)
-        self.line4.set_xdata(self.t_history)
-        self.line4.set_ydata(self.yc_history)
 
-        if len(self.t_history) > 1:
-            t_arr = np.array(self.t_history)
-            u_arr = np.array(self.u_history)
-            theta_arr = np.array(self.theta_history)
-            psi_arr = np.array(self.psi_history)
-            yc_arr = np.array(self.yc_history)
+        if len(self.t_history) <= 1:
 
-            t_now = t_arr[-1]
-            window_start_threshold = self.time-1 if self.time < 5 else self.time-2
-            if t_now <= window_start_threshold:
-                xlim_min, xlim_max = 0, self.time
-            else:
-                xlim_min, xlim_max = t_now - window_start_threshold, t_now - window_start_threshold + self.time
+            self.line1.set_xdata(self.t_history)
+            self.line1.set_ydata(self.u_history)
+            self.line2.set_xdata(self.t_history)
+            self.line2.set_ydata(self.theta_history)
+            self.line3.set_xdata(self.t_history)
+            self.line3.set_ydata(self.psi_history)
+            self.line4.set_xdata(self.t_history)
+            self.line4.set_ydata(self.yc_history)
 
-            mask = (t_arr >= xlim_min) & (t_arr <= xlim_max+1)
 
-            maximum = np.max([np.max(u_arr[mask]), np.max(yc_arr[mask]), np.max(theta_arr[mask]), np.max(psi_arr[mask])]) + 0.4
-            minimum = np.min([np.min(u_arr[mask]), np.min(yc_arr[mask]), np.min(theta_arr[mask]), np.min(psi_arr[mask])]) - 0.4
+            return (self.line1, self.line2, self.line3, self.line4)
+        
+        t_arr = np.array(self.t_history)
+        u_arr = np.array(self.u_history)
+        theta_arr = np.array(self.theta_history)
+        psi_arr = np.array(self.psi_history)
+        yc_arr = np.array(self.yc_history)
 
-            self.ax.set_xlim(xlim_min, xlim_max)
-            self.ax.set_ylim(minimum, maximum)
+        t_now = t_arr[-1]
+        window_start_threshold = self.time-1 if self.time < 5 else self.time-2
+        if t_now <= window_start_threshold:
+            xlim_min, xlim_max = 0, self.time
+        else:
+            xlim_min, xlim_max = t_now - window_start_threshold, t_now - window_start_threshold + self.time
 
-        self.fig.canvas.draw_idle()
+        mask = (t_arr >= xlim_min) & (t_arr <= xlim_max)
+        maximum = np.max([np.max(u_arr[mask]), np.max(yc_arr[mask]), np.max(theta_arr[mask]), np.max(psi_arr[mask])]) + 0.4
+        minimum = np.min([np.min(u_arr[mask]), np.min(yc_arr[mask]), np.min(theta_arr[mask]), np.min(psi_arr[mask])]) - 0.4
+
+        self.ax.set_xlim(xlim_min, xlim_max)
+        self.ax.set_ylim(minimum, maximum)
+        self.line1.set_xdata(t_arr[mask])
+        self.line1.set_ydata(u_arr[mask])
+        self.line2.set_xdata(t_arr[mask])
+        self.line2.set_ydata(theta_arr[mask])
+        self.line3.set_xdata(t_arr[mask])
+        self.line3.set_ydata(psi_arr[mask])
+        self.line4.set_xdata(t_arr[mask])
+        self.line4.set_ydata(yc_arr[mask])
+
 
         return (self.line1, self.line2, self.line3, self.line4)
 
@@ -239,13 +252,11 @@ class MyAnimation:
         self.printtime.set_text(f'Simulation time : {round(self.current_t, 2)}')
         self.previous_x = self.x
 
-        self.fig2.canvas.draw_idle()
-
         return(self.uppermass, self.wheelmark, self.rod, self.wheel, self.printtime)
 
 
     # Pour changer les paramètre de commande et relancer le solver
-    def update_simu(self, K, lc, ref_time, ampl, end_time, mov_points):
+    def update_simu(self, K, lc, ampl, end_time, mov_points):
         self.K = K
         self.lc = lc
         self.current_yc = ampl

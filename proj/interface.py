@@ -243,10 +243,10 @@ class Mainwindow(QMainWindow):
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
 
         if not self.first_input:
-            self.anim.update_simu(K, lc, 0, self.reference, self.tf, self.plot_type)
+            self.anim.update_simu(K, lc, self.reference, self.tf, self.plot_type)
             self.label2.setText('Parameters have been updated, ready for next restart !!!')
         else:
-            self.anim = ma.MyAnimation(K, lc, 0, self.reference, self.tf, self.plot_type)
+            self.anim = ma.MyAnimation(K, lc, self.reference, self.tf, self.plot_type)
             self.button.setText('Update inputs')
             self.label2.setText('Simulation started !')
             self.first_input = False

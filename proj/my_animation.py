@@ -65,7 +65,7 @@ R = 0.042
 r = 0.01
 
 class MyAnimation:
-    def __init__(self, K, lc, ref_time, ref_ampl, time, mov_points):
+    def __init__(self, K, lc, ref_ampl, time, mov_points):
         # Gain retour d'état
         self.K = K
 
@@ -86,9 +86,6 @@ class MyAnimation:
 
         # Intervalle de temps entre début et fin avec x images entre les 2
         self.t_eval = np.linspace(self.tspan[0], self.tspan[1], num=self.frame_count)
-
-        # Début de l'échelon envoyé
-        self.start_reference_time = ref_time
 
         # Amplitude de l'échelon
         self.initial_amplitude = ref_ampl
@@ -166,7 +163,7 @@ class MyAnimation:
 
     # Simule le système non linéaire
     def run_simulation(self):
-        self.sol = solve_ivp(nxt.xdot, self.tspan, self.x0, t_eval=self.t_eval, method='RK45', args=(self.K, self.lc, consigne_temp, self.start_reference_time, self.initial_amplitude))
+        self.sol = solve_ivp(nxt.xdot_segment, self.tspan, self.x0, t_eval=self.t_eval, method='RK45', args=(self.K, self.lc))
 
         self.t = self.sol.t
         self.xout = self.sol.y
@@ -179,7 +176,7 @@ class MyAnimation:
 
         self.yc = []
         for i in range(len(self.t)):
-            yc_actuelle = consigne_temp(self.t[i], self.start_reference_time, self.initial_amplitude)
+            yc_actuelle = self.initial_amplitude
             x_actuelle = self.xout[:, i]
             utheo = -np.dot(self.K, x_actuelle) + yc_actuelle*self.lc
             utheo = np.clip(utheo, -8.0, 8.0)
@@ -274,11 +271,10 @@ class MyAnimation:
 
 
     # Pour changer les paramètre de commande et relancer le solver
-    def update_simu(self, K, lc, ref_time, ampl, end_time, mov_points):
+    def update_simu(self, K, lc, ampl, end_time, mov_points):
         self.K = K
         self.lc = lc
         self.initial_amplitude = ampl
-        self.start_reference_time = ref_time
         self.tspan = (0.0, end_time)
         self.frame_count = end_time*80
         self.t_eval = np.linspace(self.tspan[0], self.tspan[1], num=self.frame_count)
