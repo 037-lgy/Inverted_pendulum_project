@@ -1,1 +1,1 @@
-# Inverted_pendul_Python
+# Inverted_pendulum_project
