@@ -17,10 +17,6 @@ M = 0.8  # body weight [kg]
 W = 0.042  # body width [m]
 D = 0.055  # body depth [m]
 H = 0.160  # body height [m]
-# M = 0.67  # body weight [kg] 
-# W = 0.165  # body width [m]
-# D = 0.05  # body depth [m]
-# H = 0.152  # body height [m]
 
 ####################################################################
 L = H / 2  # distance of the center of mass from the wheel axle [m]
@@ -34,7 +30,6 @@ fw = 0  # friction coefficient between wheel & floor
 Jm = 1e-5  # DC motor inertia moment [kgm^2]
 
 ###################################################################
-#Rm = 6.8327  # DC motor resistance [ƒ¶]
 Rm = 6.69  # DC motor resistance [ƒ¶]
 Kb = 0.468  # DC motor back EMF constant [Vsec/rad]
 ###################################################################
