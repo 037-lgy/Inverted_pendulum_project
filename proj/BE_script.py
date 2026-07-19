@@ -22,7 +22,7 @@ plot_non_linear_bo = False
 
 # Plot la comparaison de la sortie theta entre le modèle
 # linéaire et non linéaire, sur un temps court avec un échelon unitaire entrée
-plot_compare_lin_nonlin_bo = True
+plot_compare_lin_nonlin_bo = False
 
 # Plot la réponse à un impulsion
 plot_impulse_bo = False
@@ -49,7 +49,7 @@ plot_input_bf = False
 plot_lsim_pregain = False
 
 # Plot la réponse à un échelon (pi/5) du modèle non linéaire
-plot_non_linear = False
+plot_non_linear = True
 
 # Plot la comparaison de theta/psi/u entre le modèle linéaire et non linéaire
 # avec un échelon en entrée pour les valeurs de K et lc calculées au début
