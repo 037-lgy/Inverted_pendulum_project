@@ -8,13 +8,6 @@ from scipy.integrate import solve_ivp
 
 A = np.array([[0, 0, 1, 0], 
               [0, 0, 0, 1], 
-              [0, -413.51141165, -131.57981958, 131.57981958], 
-              [0, 265.56666878, 62.72534683, -62.72534683]])
-
-B = np.array([[0], [0], [254.34231643], [-121.24739236]])
-
-A = np.array([[0, 0, 1, 0], 
-              [0, 0, 0, 1], 
               [0, -444.58852126, -123.11348321, 123.11348321], 
               [0, 264.94676359, 55.09518151, -55.09518151]])
 
@@ -53,12 +46,6 @@ def compute_K_lc(wn, z):
     dc_gain = ctrl.dcgain(sysGCL)
     lc = 1 / dc_gain
     return (K, lc)
-
-def consigne_temp(t, start_time, amplitude):
-    if t < start_time:
-        return 0
-    else:
-        return amplitude
     
 H = 0.160
 R = 0.042
