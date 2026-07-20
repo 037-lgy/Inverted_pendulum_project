@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="./js/coder_app.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="./rtwreport_utils.js"></script>
+<script type="text/javascript" src="./rtwannotate.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/coder_app.css"/>
+</head>
+<body onload="srcFileOnload();">
+<pre id="code">
+<table class="code" id="codeTbl">
+<tr name="1" id="1">
+<td><a id="l1" class='ln'>1</a></td><td><span class="ct">/* Copyright 2019 The MathWorks, Inc. */</span></td></tr>
+<tr name="2" id="2">
+<td><a id="l2" class='ln'>2</a></td><td></td></tr>
+<tr name="3" id="3">
+<td><a id="l3" class='ln'>3</a></td><td><span class="ct">/**********************************************</span></td></tr>
+<tr name="4" id="4">
+<td><a id="l4" class='ln'>4</a></td><td><span class="ct"> *     CMUCam5 Pixy2 Vision Sensor Driver     *</span></td></tr>
+<tr name="5" id="5">
+<td><a id="l5" class='ln'>5</a></td><td><span class="ct"> *********************************************/</span></td></tr>
+<tr name="6" id="6">
+<td><a id="l6" class='ln'>6</a></td><td></td></tr>
+<tr name="7" id="7">
+<td><a id="l7" class='ln'>7</a></td><td><span class="pp">#include "driver_ev3.h"</span></td></tr>
+<tr name="8" id="8">
+<td><a id="l8" class='ln'>8</a></td><td><span class="pp">#include &lt;stdio.h&gt;</span></td></tr>
+<tr name="9" id="9">
+<td><a id="l9" class='ln'>9</a></td><td><span class="pp">#include &lt;sys/ioctl.h&gt;</span></td></tr>
+<tr name="10" id="10">
+<td><a id="l10" class='ln'>10</a></td><td></td></tr>
+<tr name="11" id="11">
+<td><a id="l11" class='ln'>11</a></td><td><span class="pp">#define</span> <a id="11c9" class="tk">COLORTRACKINGFRAMEWIDTH</a> 315</td></tr>
+<tr name="12" id="12">
+<td><a id="l12" class='ln'>12</a></td><td><span class="pp">#define</span> <a id="12c9" class="tk">COLORTRACKINGFRAMEHEIGHT</a> 207</td></tr>
+<tr name="13" id="13">
+<td><a id="l13" class='ln'>13</a></td><td><span class="pp">#define</span> <a id="13c9" class="tk">BYTESPERDETECTEDBLOCK</a> 14</td></tr>
+<tr name="14" id="14">
+<td><a id="l14" class='ln'>14</a></td><td><span class="pp">#define</span> <a id="14c9" class="tk">LINETRACKINGFRAMEWIDTH</a> 78</td></tr>
+<tr name="15" id="15">
+<td><a id="l15" class='ln'>15</a></td><td><span class="pp">#define</span> <a id="15c9" class="tk">LINETRACKINGFRAMEHEIGHT</a> 51</td></tr>
+<tr name="16" id="16">
+<td><a id="l16" class='ln'>16</a></td><td><span class="pp">#define</span> <a id="16c9" class="tk">UPPERSYNCBYTE</a> 193</td></tr>
+<tr name="17" id="17">
+<td><a id="l17" class='ln'>17</a></td><td><span class="pp">#define</span> <a id="17c9" class="tk">LOWERSYNCBYTE</a> 175</td></tr>
+<tr name="18" id="18">
+<td><a id="l18" class='ln'>18</a></td><td><span class="pp">#define</span> <a id="18c9" class="tk">COLORTRACKINGPACKETTYPE</a> 33</td></tr>
+<tr name="19" id="19">
+<td><a id="l19" class='ln'>19</a></td><td><span class="pp">#define</span> <a id="19c9" class="tk">LINETRACKINGPACKETTYPE</a> 49</td></tr>
+<tr name="20" id="20">
+<td><a id="l20" class='ln'>20</a></td><td></td></tr>
+<tr name="21" id="21">
+<td><a id="l21" class='ln'>21</a></td><td><span class="kw">static</span> <span class="kw">int</span> <a id="21c12" class="tk">iicFile</a> = <a id="21c22" class="tk">-</a>1;</td></tr>
+<tr name="22" id="22">
+<td><a id="l22" class='ln'>22</a></td><td><a id="22c1" class="tk">IIC</a> <a id="22c5" class="tk">*</a><a id="22c6" class="tk">pIic</a>;</td></tr>
+<tr name="23" id="23">
+<td><a id="l23" class='ln'>23</a></td><td><span class="kw">static</span> <a id="23c8" class="tk">IICDAT</a> <a id="23c15" class="tk">iic_dat</a>;</td></tr>
+<tr name="24" id="24">
+<td><a id="l24" class='ln'>24</a></td><td></td></tr>
+<tr name="25" id="25">
+<td><a id="l25" class='ln'>25</a></td><td><span class="kw">void</span> <a id="25c6" class="tk">setIICCommand</a>(<a id="25c20" class="tk">uint8_T</a> <a id="25c28" class="tk">portNumber</a>, <a id="25c40" class="tk">uint8_T</a> <a id="25c48" class="tk">i2cAddress</a>, <a id="25c60" class="tk">uint8_T</a> <a id="25c68" class="tk">mode</a>, <a id="25c74" class="tk">uint8_T</a> <a id="25c82" class="tk">sampleTime</a>, <a id="25c94" class="tk">uint8_T</a> <a id="25c102" class="tk">colorSignature</a>) </td></tr>
+<tr name="26" id="26">
+<td><a id="l26" class='ln'>26</a></td><td><span class="br">{</span></td></tr>
+<tr name="27" id="27">
+<td><a id="l27" class='ln'>27</a></td><td>    <span class="ct">// Common i2c dat settings for all requests</span></td></tr>
+<tr name="28" id="28">
+<td><a id="l28" class='ln'>28</a></td><td>    <a id="28c5" class="tk">iic_dat</a>.<a id="28c13" class="tk">Port</a> = <a id="28c20" class="tk">portNumber</a>;</td></tr>
+<tr name="29" id="29">
+<td><a id="l29" class='ln'>29</a></td><td>    <a id="29c5" class="tk">iic_dat</a>.<a id="29c13" class="tk">Time</a> = <a id="29c20" class="tk">sampleTime</a>;</td></tr>
+<tr name="30" id="30">
+<td><a id="l30" class='ln'>30</a></td><td>    <a id="30c5" class="tk">iic_dat</a>.<a id="30c13" class="tk">WrData</a>[0] = <a id="30c25" class="tk">i2cAddress</a>;</td></tr>
+<tr name="31" id="31">
+<td><a id="l31" class='ln'>31</a></td><td>    <a id="31c5" class="tk">iic_dat</a>.<a id="31c13" class="tk">WrData</a>[1] = 00; <span class="ct">// In case of pixy2, the firmware has knowledge of register to fetch data from, so send 00</span></td></tr>
+<tr name="32" id="32">
+<td><a id="l32" class='ln'>32</a></td><td>    <a id="32c5" class="tk">iic_dat</a>.<a id="32c13" class="tk">WrData</a>[2] = 0xAE;</td></tr>
+<tr name="33" id="33">
+<td><a id="l33" class='ln'>33</a></td><td>    <a id="33c5" class="tk">iic_dat</a>.<a id="33c13" class="tk">WrData</a>[3] = 0xC1;</td></tr>
+<tr name="34" id="34">
+<td><a id="l34" class='ln'>34</a></td><td></td></tr>
+<tr name="35" id="35">
+<td><a id="l35" class='ln'>35</a></td><td>    <span class="kw">if</span>((<a id="35c9" class="tk">mode</a> <a id="35c14" class="tk">==</a> 0)<a id="35c19" class="tk">||</a>(<a id="35c22" class="tk">mode</a> <a id="35c27" class="tk">==</a> 1)<a id="35c32" class="tk">||</a>(<a id="35c35" class="tk">mode</a> <a id="35c40" class="tk">==</a> 2)) </td></tr>
+<tr name="36" id="36">
+<td><a id="l36" class='ln'>36</a></td><td>    <span class="br">{</span></td></tr>
+<tr name="37" id="37">
+<td><a id="l37" class='ln'>37</a></td><td>        <span class="ct">// Color Signature Tracking</span></td></tr>
+<tr name="38" id="38">
+<td><a id="l38" class='ln'>38</a></td><td>        <a id="38c9" class="tk">iic_dat</a>.<a id="38c17" class="tk">RdLng</a> = 0x14; </td></tr>
+<tr name="39" id="39">
+<td><a id="l39" class='ln'>39</a></td><td>        <a id="39c9" class="tk">iic_dat</a>.<a id="39c17" class="tk">WrLng</a> = 0x08;  </td></tr>
+<tr name="40" id="40">
+<td><a id="l40" class='ln'>40</a></td><td>        <a id="40c9" class="tk">iic_dat</a>.<a id="40c17" class="tk">WrData</a>[4] = 0x20;</td></tr>
+<tr name="41" id="41">
+<td><a id="l41" class='ln'>41</a></td><td>        <a id="41c9" class="tk">iic_dat</a>.<a id="41c17" class="tk">WrData</a>[5] = 0x02;</td></tr>
+<tr name="42" id="42">
+<td><a id="l42" class='ln'>42</a></td><td>        <a id="42c9" class="tk">iic_dat</a>.<a id="42c17" class="tk">WrData</a>[6] = <a id="42c29" class="tk">colorSignature</a>;</td></tr>
+<tr name="43" id="43">
+<td><a id="l43" class='ln'>43</a></td><td>        <a id="43c9" class="tk">iic_dat</a>.<a id="43c17" class="tk">WrData</a>[7] = 0xFF;</td></tr>
+<tr name="44" id="44">
+<td><a id="l44" class='ln'>44</a></td><td>    <span class="br">}</span> <span class="kw">else</span></td></tr>
+<tr name="45" id="45">
+<td><a id="l45" class='ln'>45</a></td><td>    <span class="br">{</span></td></tr>
+<tr name="46" id="46">
+<td><a id="l46" class='ln'>46</a></td><td>        <span class="ct">// Line tracking </span></td></tr>
+<tr name="47" id="47">
+<td><a id="l47" class='ln'>47</a></td><td>        <a id="47c9" class="tk">iic_dat</a>.<a id="47c17" class="tk">RdLng</a> = 0x1C; </td></tr>
+<tr name="48" id="48">
+<td><a id="l48" class='ln'>48</a></td><td>        <a id="48c9" class="tk">iic_dat</a>.<a id="48c17" class="tk">WrLng</a> = 0x08;  </td></tr>
+<tr name="49" id="49">
+<td><a id="l49" class='ln'>49</a></td><td>        <a id="49c9" class="tk">iic_dat</a>.<a id="49c17" class="tk">WrData</a>[4] = 0x30;</td></tr>
+<tr name="50" id="50">
+<td><a id="l50" class='ln'>50</a></td><td>        <a id="50c9" class="tk">iic_dat</a>.<a id="50c17" class="tk">WrData</a>[5] = 0x02;</td></tr>
+<tr name="51" id="51">
+<td><a id="l51" class='ln'>51</a></td><td>        <a id="51c9" class="tk">iic_dat</a>.<a id="51c17" class="tk">WrData</a>[6] = 0x00; </td></tr>
+<tr name="52" id="52">
+<td><a id="l52" class='ln'>52</a></td><td>        <a id="52c9" class="tk">iic_dat</a>.<a id="52c17" class="tk">WrData</a>[7] = 0x01;     </td></tr>
+<tr name="53" id="53">
+<td><a id="l53" class='ln'>53</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="54" id="54">
+<td><a id="l54" class='ln'>54</a></td><td>        </td></tr>
+<tr name="55" id="55">
+<td><a id="l55" class='ln'>55</a></td><td>    <span class="ct">// Setup I2C communication</span></td></tr>
+<tr name="56" id="56">
+<td><a id="l56" class='ln'>56</a></td><td>    <a id="56c5" class="tk">ioctl</a>(<a id="56c11" class="tk">iicFile</a>, <a id="56c20" class="tk">IIC_SETUP</a>, <a id="56c31" class="tk">&amp;</a><a id="56c32" class="tk">iic_dat</a>);</td></tr>
+<tr name="57" id="57">
+<td><a id="l57" class='ln'>57</a></td><td><span class="br">}</span></td></tr>
+<tr name="58" id="58">
+<td><a id="l58" class='ln'>58</a></td><td></td></tr>
+<tr name="59" id="59">
+<td><a id="l59" class='ln'>59</a></td><td><span class="ct">// Initialize sensor</span></td></tr>
+<tr name="60" id="60">
+<td><a id="l60" class='ln'>60</a></td><td><span class="kw">void</span> <a id="60c6" class="tk">initCMUCam5Pixy2VisionSensor</a>()</td></tr>
+<tr name="61" id="61">
+<td><a id="l61" class='ln'>61</a></td><td><span class="br">{</span></td></tr>
+<tr name="62" id="62">
+<td><a id="l62" class='ln'>62</a></td><td>    <a id="62c5" class="tk">iicFile</a> = <a id="62c15" class="tk">open</a>(<a id="62c20" class="tk">IIC_DEVICE_NAME</a>, <a id="62c37" class="tk">O_RDWR</a> <a id="62c44" class="tk">|</a> <a id="62c46" class="tk">O_SYNC</a>);</td></tr>
+<tr name="63" id="63">
+<td><a id="l63" class='ln'>63</a></td><td>    </td></tr>
+<tr name="64" id="64">
+<td><a id="l64" class='ln'>64</a></td><td>    <span class="kw">if</span> (<a id="64c9" class="tk">iicFile</a> <a id="64c17" class="tk">==</a> <a id="64c20" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="65" id="65">
+<td><a id="l65" class='ln'>65</a></td><td>        <a id="65c9" class="tk">_EV3_DEBUG_PRINTF</a>(("Failed to open vision sensor device file.\n"));</td></tr>
+<tr name="66" id="66">
+<td><a id="l66" class='ln'>66</a></td><td>        <span class="kw">return</span>;</td></tr>
+<tr name="67" id="67">
+<td><a id="l67" class='ln'>67</a></td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="68" id="68">
+<td><a id="l68" class='ln'>68</a></td><td>        <a id="68c9" class="tk">pIic</a> = (<a id="68c17" class="tk">IIC</a><a id="68c20" class="tk">*</a>)<a id="68c22" class="tk">mmap</a>(0, <span class="kw">sizeof</span>(<a id="68c37" class="tk">IIC</a>), <a id="68c43" class="tk">PROT_READ</a> <a id="68c53" class="tk">|</a> <a id="68c55" class="tk">PROT_WRITE</a>, <a id="68c67" class="tk">MAP_FILE</a> <a id="68c76" class="tk">|</a> <a id="68c78" class="tk">MAP_SHARED</a>, <a id="68c90" class="tk">iicFile</a>, 0);</td></tr>
+<tr name="69" id="69">
+<td><a id="l69" class='ln'>69</a></td><td>        <span class="kw">if</span> (<a id="69c13" class="tk">pIic</a> <a id="69c18" class="tk">==</a> <a id="69c21" class="tk">MAP_FAILED</a>) <span class="br">{</span></td></tr>
+<tr name="70" id="70">
+<td><a id="l70" class='ln'>70</a></td><td>            <a id="70c13" class="tk">_EV3_DEBUG_PRINTF</a>(("Failed to map vision sensor memory.\n"));</td></tr>
+<tr name="71" id="71">
+<td><a id="l71" class='ln'>71</a></td><td>            <span class="kw">return</span>;</td></tr>
+<tr name="72" id="72">
+<td><a id="l72" class='ln'>72</a></td><td>        <span class="br">}</span></td></tr>
+<tr name="73" id="73">
+<td><a id="l73" class='ln'>73</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="74" id="74">
+<td><a id="l74" class='ln'>74</a></td><td>    </td></tr>
+<tr name="75" id="75">
+<td><a id="l75" class='ln'>75</a></td><td><span class="br">}</span></td></tr>
+<tr name="76" id="76">
+<td><a id="l76" class='ln'>76</a></td><td></td></tr>
+<tr name="77" id="77">
+<td><a id="l77" class='ln'>77</a></td><td></td></tr>
+<tr name="78" id="78">
+<td><a id="l78" class='ln'>78</a></td><td><span class="ct">// Get sensor values</span></td></tr>
+<tr name="79" id="79">
+<td><a id="l79" class='ln'>79</a></td><td><span class="kw">void</span> <a id="79c6" class="tk">getCMUCam5Pixy2VisionSensorValues</a>(<a id="79c40" class="tk">uint8_T</a> <a id="79c48" class="tk">portNumber</a>, <a id="79c60" class="tk">uint8_T</a> <a id="79c68" class="tk">i2cAddress</a>, <a id="79c80" class="tk">uint8_T</a> <a id="79c88" class="tk">mode</a>, <a id="79c94" class="tk">uint8_T</a> <a id="79c102" class="tk">sampleTime</a>, <a id="79c114" class="tk">uint8_T</a> <a id="79c122" class="tk">colorSignature</a>, <a id="79c138" class="tk">uint16_T</a> <a id="79c147" class="tk">*</a><a id="79c148" class="tk">featureData</a>, <a id="79c161" class="tk">uint16_T</a> <a id="79c170" class="tk">*</a><a id="79c171" class="tk">sigOutput</a>, <a id="79c182" class="tk">int16_T</a> <a id="79c190" class="tk">*</a><a id="79c191" class="tk">angle</a>)</td></tr>
+<tr name="80" id="80">
+<td><a id="l80" class='ln'>80</a></td><td><span class="br">{</span></td></tr>
+<tr name="81" id="81">
+<td><a id="l81" class='ln'>81</a></td><td>    <span class="ct">// Initialization</span></td></tr>
+<tr name="82" id="82">
+<td><a id="l82" class='ln'>82</a></td><td>    <a id="82c5" class="tk">uint8_T</a> <a id="82c13" class="tk">Port</a> = <a id="82c20" class="tk">portNumber</a> <a id="82c31" class="tk">-</a> 1;</td></tr>
+<tr name="83" id="83">
+<td><a id="l83" class='ln'>83</a></td><td>    <a id="83c5" class="tk">uint8_T</a> <a id="83c13" class="tk">iscolormode</a> = (<a id="83c28" class="tk">mode</a><a id="83c32" class="tk">==</a>0) <a id="83c37" class="tk">||</a> (<a id="83c41" class="tk">mode</a><a id="83c45" class="tk">==</a>1) <a id="83c50" class="tk">||</a> (<a id="83c54" class="tk">mode</a><a id="83c58" class="tk">==</a>2);</td></tr>
+<tr name="84" id="84">
+<td><a id="l84" class='ln'>84</a></td><td>    <a id="84c5" class="tk">uint8_T</a> <a id="84c13" class="tk">i</a> = 0;</td></tr>
+<tr name="85" id="85">
+<td><a id="l85" class='ln'>85</a></td><td>    <span class="kw">for</span>(<a id="85c9" class="tk">i</a> = 0; <a id="85c16" class="tk">i</a> <a id="85c18" class="tk">&lt;</a> 5; <a id="85c23" class="tk">i</a><a id="85c24" class="tk">++</a>)</td></tr>
+<tr name="86" id="86">
+<td><a id="l86" class='ln'>86</a></td><td>    <span class="br">{</span></td></tr>
+<tr name="87" id="87">
+<td><a id="l87" class='ln'>87</a></td><td>        <a id="87c9" class="tk">featureData</a>[<a id="87c21" class="tk">i</a>] = 0;</td></tr>
+<tr name="88" id="88">
+<td><a id="l88" class='ln'>88</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="89" id="89">
+<td><a id="l89" class='ln'>89</a></td><td>    <a id="89c5" class="tk">*</a><a id="89c6" class="tk">sigOutput</a> = 0;</td></tr>
+<tr name="90" id="90">
+<td><a id="l90" class='ln'>90</a></td><td>    <a id="90c5" class="tk">*</a><a id="90c6" class="tk">angle</a> = 0;</td></tr>
+<tr name="91" id="91">
+<td><a id="l91" class='ln'>91</a></td><td>    <a id="91c5" class="tk">uint16_T</a> <a id="91c14" class="tk">sigMax</a> = 65535;</td></tr>
+<tr name="92" id="92">
+<td><a id="l92" class='ln'>92</a></td><td>    <span class="kw">if</span>(<a id="92c8" class="tk">mode</a><a id="92c12" class="tk">==</a>0) <span class="br">{</span></td></tr>
+<tr name="93" id="93">
+<td><a id="l93" class='ln'>93</a></td><td>        <a id="93c9" class="tk">sigMax</a> = 7;</td></tr>
+<tr name="94" id="94">
+<td><a id="l94" class='ln'>94</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="95" id="95">
+<td><a id="l95" class='ln'>95</a></td><td>        </td></tr>
+<tr name="96" id="96">
+<td><a id="l96" class='ln'>96</a></td><td>    <a id="96c5" class="tk">setIICCommand</a>(<a id="96c19" class="tk">Port</a>, <a id="96c25" class="tk">i2cAddress</a>, <a id="96c37" class="tk">mode</a>, <a id="96c43" class="tk">sampleTime</a>, <a id="96c55" class="tk">colorSignature</a>);</td></tr>
+<tr name="97" id="97">
+<td><a id="l97" class='ln'>97</a></td><td></td></tr>
+<tr name="98" id="98">
+<td><a id="l98" class='ln'>98</a></td><td></td></tr>
+<tr name="99" id="99">
+<td><a id="l99" class='ln'>99</a></td><td>    <a id="99c5" class="tk">uint8_T</a> <a id="99c13" class="tk">readlength</a> = <a id="99c26" class="tk">iic_dat</a>.<a id="99c34" class="tk">RdLng</a>;</td></tr>
+<tr name="100" id="100">
+<td><a id="l100" class='ln'>100</a></td><td>    <a id="100c5" class="tk">uint8_T</a> <a id="100c13" class="tk">syncbytelower</a> = <a id="100c29" class="tk">pIic</a>-&gt;<a id="100c35" class="tk">Raw</a>[<a id="100c39" class="tk">Port</a>][<a id="100c45" class="tk">pIic</a>-&gt;<a id="100c51" class="tk">Actual</a>[<a id="100c58" class="tk">Port</a>]][<a id="100c65" class="tk">readlength</a> <a id="100c76" class="tk">-</a> 1];</td></tr>
+<tr name="101" id="101">
+<td><a id="l101" class='ln'>101</a></td><td>    <a id="101c5" class="tk">uint8_T</a> <a id="101c13" class="tk">syncbyteupper</a> = <a id="101c29" class="tk">pIic</a>-&gt;<a id="101c35" class="tk">Raw</a>[<a id="101c39" class="tk">Port</a>][<a id="101c45" class="tk">pIic</a>-&gt;<a id="101c51" class="tk">Actual</a>[<a id="101c58" class="tk">Port</a>]][<a id="101c65" class="tk">readlength</a> <a id="101c76" class="tk">-</a> 2];</td></tr>
+<tr name="102" id="102">
+<td><a id="l102" class='ln'>102</a></td><td>    <a id="102c5" class="tk">uint8_T</a> <a id="102c13" class="tk">packettype</a> = <a id="102c26" class="tk">pIic</a>-&gt;<a id="102c32" class="tk">Raw</a>[<a id="102c36" class="tk">Port</a>][<a id="102c42" class="tk">pIic</a>-&gt;<a id="102c48" class="tk">Actual</a>[<a id="102c55" class="tk">Port</a>]][<a id="102c62" class="tk">readlength</a> <a id="102c73" class="tk">-</a> 3];</td></tr>
+<tr name="103" id="103">
+<td><a id="l103" class='ln'>103</a></td><td>    <a id="103c5" class="tk">uint8_T</a> <a id="103c13" class="tk">payloadlength</a> = <a id="103c29" class="tk">pIic</a>-&gt;<a id="103c35" class="tk">Raw</a>[<a id="103c39" class="tk">Port</a>][<a id="103c45" class="tk">pIic</a>-&gt;<a id="103c51" class="tk">Actual</a>[<a id="103c58" class="tk">Port</a>]][<a id="103c65" class="tk">readlength</a> <a id="103c76" class="tk">-</a> 4];</td></tr>
+<tr name="104" id="104">
+<td><a id="l104" class='ln'>104</a></td><td>    </td></tr>
+<tr name="105" id="105">
+<td><a id="l105" class='ln'>105</a></td><td>   </td></tr>
+<tr name="106" id="106">
+<td><a id="l106" class='ln'>106</a></td><td>    <span class="ct">// Check for sync bytes </span></td></tr>
+<tr name="107" id="107">
+<td><a id="l107" class='ln'>107</a></td><td>    <span class="kw">if</span>( (<a id="107c10" class="tk">syncbyteupper</a><a id="107c23" class="tk">==</a><a id="107c25" class="tk">UPPERSYNCBYTE</a>) <a id="107c40" class="tk">&amp;&amp;</a> (<a id="107c44" class="tk">syncbytelower</a><a id="107c57" class="tk">==</a><a id="107c59" class="tk">LOWERSYNCBYTE</a>) )</td></tr>
+<tr name="108" id="108">
+<td><a id="l108" class='ln'>108</a></td><td>    <span class="br">{</span></td></tr>
+<tr name="109" id="109">
+<td><a id="l109" class='ln'>109</a></td><td>        <span class="kw">if</span>( (<a id="109c14" class="tk">iscolormode</a><a id="109c25" class="tk">==</a>1) <a id="109c30" class="tk">&amp;&amp;</a> (<a id="109c34" class="tk">packettype</a><a id="109c44" class="tk">==</a>33))</td></tr>
+<tr name="110" id="110">
+<td><a id="l110" class='ln'>110</a></td><td>        <span class="br">{</span></td></tr>
+<tr name="111" id="111">
+<td><a id="l111" class='ln'>111</a></td><td>            <a id="111c13" class="tk">uint8_T</a> <a id="111c21" class="tk">blockx1</a> = <a id="111c31" class="tk">pIic</a>-&gt;<a id="111c37" class="tk">Raw</a>[<a id="111c41" class="tk">Port</a>][<a id="111c47" class="tk">pIic</a>-&gt;<a id="111c53" class="tk">Actual</a>[<a id="111c60" class="tk">Port</a>]][<a id="111c67" class="tk">readlength</a> <a id="111c78" class="tk">-</a> 9];</td></tr>
+<tr name="112" id="112">
+<td><a id="l112" class='ln'>112</a></td><td>            <a id="112c13" class="tk">uint8_T</a> <a id="112c21" class="tk">blockx2</a> = <a id="112c31" class="tk">pIic</a>-&gt;<a id="112c37" class="tk">Raw</a>[<a id="112c41" class="tk">Port</a>][<a id="112c47" class="tk">pIic</a>-&gt;<a id="112c53" class="tk">Actual</a>[<a id="112c60" class="tk">Port</a>]][<a id="112c67" class="tk">readlength</a> <a id="112c78" class="tk">-</a> 10];</td></tr>
+<tr name="113" id="113">
+<td><a id="l113" class='ln'>113</a></td><td>            <a id="113c13" class="tk">featureData</a>[0] = <a id="113c30" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="113c69" class="tk">blockx2</a><a id="113c76" class="tk">*</a>256<a id="113c80" class="tk">+</a><a id="113c81" class="tk">blockx1</a>, 0, <a id="113c93" class="tk">COLORTRACKINGFRAMEWIDTH</a>);</td></tr>
+<tr name="114" id="114">
+<td><a id="l114" class='ln'>114</a></td><td>            <a id="114c13" class="tk">_EV3_DEBUG_PRINTF</a>((" BlockX is %u \n", <a id="114c52" class="tk">featureData</a>[0]));</td></tr>
+<tr name="115" id="115">
+<td><a id="l115" class='ln'>115</a></td><td>            <a id="115c13" class="tk">uint8_T</a> <a id="115c21" class="tk">blocky1</a> = <a id="115c31" class="tk">pIic</a>-&gt;<a id="115c37" class="tk">Raw</a>[<a id="115c41" class="tk">Port</a>][<a id="115c47" class="tk">pIic</a>-&gt;<a id="115c53" class="tk">Actual</a>[<a id="115c60" class="tk">Port</a>]][<a id="115c67" class="tk">readlength</a> <a id="115c78" class="tk">-</a> 11];</td></tr>
+<tr name="116" id="116">
+<td><a id="l116" class='ln'>116</a></td><td>            <a id="116c13" class="tk">uint8_T</a> <a id="116c21" class="tk">blocky2</a> = <a id="116c31" class="tk">pIic</a>-&gt;<a id="116c37" class="tk">Raw</a>[<a id="116c41" class="tk">Port</a>][<a id="116c47" class="tk">pIic</a>-&gt;<a id="116c53" class="tk">Actual</a>[<a id="116c60" class="tk">Port</a>]][<a id="116c67" class="tk">readlength</a> <a id="116c78" class="tk">-</a> 12];</td></tr>
+<tr name="117" id="117">
+<td><a id="l117" class='ln'>117</a></td><td>            <a id="117c13" class="tk">featureData</a>[1] = <a id="117c30" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="117c69" class="tk">blocky2</a><a id="117c76" class="tk">*</a>256<a id="117c80" class="tk">+</a><a id="117c81" class="tk">blocky1</a>, 0, <a id="117c93" class="tk">COLORTRACKINGFRAMEHEIGHT</a>);</td></tr>
+<tr name="118" id="118">
+<td><a id="l118" class='ln'>118</a></td><td>            <a id="118c13" class="tk">_EV3_DEBUG_PRINTF</a>((" BlockY is %u \n", <a id="118c52" class="tk">featureData</a>[1]));</td></tr>
+<tr name="119" id="119">
+<td><a id="l119" class='ln'>119</a></td><td>            <a id="119c13" class="tk">uint8_T</a> <a id="119c21" class="tk">blockw1</a> = <a id="119c31" class="tk">pIic</a>-&gt;<a id="119c37" class="tk">Raw</a>[<a id="119c41" class="tk">Port</a>][<a id="119c47" class="tk">pIic</a>-&gt;<a id="119c53" class="tk">Actual</a>[<a id="119c60" class="tk">Port</a>]][<a id="119c67" class="tk">readlength</a> <a id="119c78" class="tk">-</a> 13];</td></tr>
+<tr name="120" id="120">
+<td><a id="l120" class='ln'>120</a></td><td>            <a id="120c13" class="tk">uint8_T</a> <a id="120c21" class="tk">blockw2</a> = <a id="120c31" class="tk">pIic</a>-&gt;<a id="120c37" class="tk">Raw</a>[<a id="120c41" class="tk">Port</a>][<a id="120c47" class="tk">pIic</a>-&gt;<a id="120c53" class="tk">Actual</a>[<a id="120c60" class="tk">Port</a>]][<a id="120c67" class="tk">readlength</a> <a id="120c78" class="tk">-</a> 14];</td></tr>
+<tr name="121" id="121">
+<td><a id="l121" class='ln'>121</a></td><td>            <a id="121c13" class="tk">featureData</a>[2] = <a id="121c30" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="121c69" class="tk">blockw2</a><a id="121c76" class="tk">*</a>256<a id="121c80" class="tk">+</a><a id="121c81" class="tk">blockw1</a>, 0, <a id="121c93" class="tk">COLORTRACKINGFRAMEWIDTH</a>);</td></tr>
+<tr name="122" id="122">
+<td><a id="l122" class='ln'>122</a></td><td>            <a id="122c13" class="tk">_EV3_DEBUG_PRINTF</a>((" BlockW is %u \n", <a id="122c52" class="tk">featureData</a>[2]));</td></tr>
+<tr name="123" id="123">
+<td><a id="l123" class='ln'>123</a></td><td>            <a id="123c13" class="tk">uint8_T</a> <a id="123c21" class="tk">blockh1</a> = <a id="123c31" class="tk">pIic</a>-&gt;<a id="123c37" class="tk">Raw</a>[<a id="123c41" class="tk">Port</a>][<a id="123c47" class="tk">pIic</a>-&gt;<a id="123c53" class="tk">Actual</a>[<a id="123c60" class="tk">Port</a>]][<a id="123c67" class="tk">readlength</a> <a id="123c78" class="tk">-</a> 15];</td></tr>
+<tr name="124" id="124">
+<td><a id="l124" class='ln'>124</a></td><td>            <a id="124c13" class="tk">uint8_T</a> <a id="124c21" class="tk">blockh2</a> = <a id="124c31" class="tk">pIic</a>-&gt;<a id="124c37" class="tk">Raw</a>[<a id="124c41" class="tk">Port</a>][<a id="124c47" class="tk">pIic</a>-&gt;<a id="124c53" class="tk">Actual</a>[<a id="124c60" class="tk">Port</a>]][<a id="124c67" class="tk">readlength</a> <a id="124c78" class="tk">-</a> 16];</td></tr>
+<tr name="125" id="125">
+<td><a id="l125" class='ln'>125</a></td><td>            <a id="125c13" class="tk">featureData</a>[3] = <a id="125c30" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="125c69" class="tk">blockh2</a><a id="125c76" class="tk">*</a>256<a id="125c80" class="tk">+</a><a id="125c81" class="tk">blockh1</a>, 0, <a id="125c93" class="tk">COLORTRACKINGFRAMEHEIGHT</a>);</td></tr>
+<tr name="126" id="126">
+<td><a id="l126" class='ln'>126</a></td><td>            <a id="126c13" class="tk">_EV3_DEBUG_PRINTF</a>((" BlockH is %u \n", <a id="126c52" class="tk">featureData</a>[3]));</td></tr>
+<tr name="127" id="127">
+<td><a id="l127" class='ln'>127</a></td><td>            <a id="127c13" class="tk">featureData</a>[4] = <a id="127c30" class="tk">payloadlength</a><a id="127c43" class="tk">/</a><a id="127c44" class="tk">BYTESPERDETECTEDBLOCK</a>; </td></tr>
+<tr name="128" id="128">
+<td><a id="l128" class='ln'>128</a></td><td>            <a id="128c13" class="tk">_EV3_DEBUG_PRINTF</a>((" Block Count is %u \n", <a id="128c57" class="tk">featureData</a>[4]));</td></tr>
+<tr name="129" id="129">
+<td><a id="l129" class='ln'>129</a></td><td>            <a id="129c13" class="tk">uint8_T</a> <a id="129c21" class="tk">siglower</a> = <a id="129c32" class="tk">pIic</a>-&gt;<a id="129c38" class="tk">Raw</a>[<a id="129c42" class="tk">Port</a>][<a id="129c48" class="tk">pIic</a>-&gt;<a id="129c54" class="tk">Actual</a>[<a id="129c61" class="tk">Port</a>]][<a id="129c68" class="tk">readlength</a> <a id="129c79" class="tk">-</a> 7];</td></tr>
+<tr name="130" id="130">
+<td><a id="l130" class='ln'>130</a></td><td>            <a id="130c13" class="tk">uint8_T</a> <a id="130c21" class="tk">sigupper</a> = <a id="130c32" class="tk">pIic</a>-&gt;<a id="130c38" class="tk">Raw</a>[<a id="130c42" class="tk">Port</a>][<a id="130c48" class="tk">pIic</a>-&gt;<a id="130c54" class="tk">Actual</a>[<a id="130c61" class="tk">Port</a>]][<a id="130c68" class="tk">readlength</a> <a id="130c79" class="tk">-</a> 8];</td></tr>
+<tr name="131" id="131">
+<td><a id="l131" class='ln'>131</a></td><td>            <a id="131c13" class="tk">*</a><a id="131c14" class="tk">sigOutput</a> = <a id="131c26" class="tk">convertDecimalToOctal</a>(<a id="131c48" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="131c87" class="tk">sigupper</a><a id="131c95" class="tk">*</a>256<a id="131c99" class="tk">+</a><a id="131c100" class="tk">siglower</a>, 0, <a id="131c113" class="tk">sigMax</a>));</td></tr>
+<tr name="132" id="132">
+<td><a id="l132" class='ln'>132</a></td><td>            <a id="132c13" class="tk">_EV3_DEBUG_PRINTF</a>((" Signature is %u \n", <a id="132c55" class="tk">*</a><a id="132c56" class="tk">sigOutput</a>));</td></tr>
+<tr name="133" id="133">
+<td><a id="l133" class='ln'>133</a></td><td>            <a id="133c13" class="tk">uint8_T</a> <a id="133c21" class="tk">anglelower</a> = <a id="133c34" class="tk">pIic</a>-&gt;<a id="133c40" class="tk">Raw</a>[<a id="133c44" class="tk">Port</a>][<a id="133c50" class="tk">pIic</a>-&gt;<a id="133c56" class="tk">Actual</a>[<a id="133c63" class="tk">Port</a>]][<a id="133c70" class="tk">readlength</a> <a id="133c81" class="tk">-</a> 17];</td></tr>
+<tr name="134" id="134">
+<td><a id="l134" class='ln'>134</a></td><td>            <a id="134c13" class="tk">uint8_T</a> <a id="134c21" class="tk">angleupper</a> = <a id="134c34" class="tk">pIic</a>-&gt;<a id="134c40" class="tk">Raw</a>[<a id="134c44" class="tk">Port</a>][<a id="134c50" class="tk">pIic</a>-&gt;<a id="134c56" class="tk">Actual</a>[<a id="134c63" class="tk">Port</a>]][<a id="134c70" class="tk">readlength</a> <a id="134c81" class="tk">-</a> 18];</td></tr>
+<tr name="135" id="135">
+<td><a id="l135" class='ln'>135</a></td><td>            <a id="135c13" class="tk">*</a><a id="135c14" class="tk">angle</a> = <a id="135c22" class="tk">angleupper</a><a id="135c32" class="tk">*</a>256<a id="135c36" class="tk">+</a><a id="135c37" class="tk">anglelower</a>;</td></tr>
+<tr name="136" id="136">
+<td><a id="l136" class='ln'>136</a></td><td>            <a id="136c13" class="tk">_EV3_DEBUG_PRINTF</a>((" Angle is %u \n", <a id="136c51" class="tk">*</a><a id="136c52" class="tk">angle</a>));</td></tr>
+<tr name="137" id="137">
+<td><a id="l137" class='ln'>137</a></td><td>            </td></tr>
+<tr name="138" id="138">
+<td><a id="l138" class='ln'>138</a></td><td>        <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> ( (<a id="138c22" class="tk">iscolormode</a><a id="138c33" class="tk">==</a>0) <a id="138c38" class="tk">&amp;&amp;</a> (<a id="138c42" class="tk">packettype</a><a id="138c52" class="tk">==</a>49) )</td></tr>
+<tr name="139" id="139">
+<td><a id="l139" class='ln'>139</a></td><td>            <span class="br">{</span></td></tr>
+<tr name="140" id="140">
+<td><a id="l140" class='ln'>140</a></td><td>                <a id="140c17" class="tk">uint8_T</a> <a id="140c25" class="tk">x0</a> = <a id="140c30" class="tk">pIic</a>-&gt;<a id="140c36" class="tk">Raw</a>[<a id="140c40" class="tk">Port</a>][<a id="140c46" class="tk">pIic</a>-&gt;<a id="140c52" class="tk">Actual</a>[<a id="140c59" class="tk">Port</a>]][<a id="140c66" class="tk">readlength</a> <a id="140c77" class="tk">-</a> 9];</td></tr>
+<tr name="141" id="141">
+<td><a id="l141" class='ln'>141</a></td><td>                <a id="141c17" class="tk">featureData</a>[0] = <a id="141c34" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="141c73" class="tk">x0</a>, 0, <a id="141c80" class="tk">LINETRACKINGFRAMEWIDTH</a>);</td></tr>
+<tr name="142" id="142">
+<td><a id="l142" class='ln'>142</a></td><td>                <a id="142c17" class="tk">_EV3_DEBUG_PRINTF</a>((" x0 is %u \n", <a id="142c52" class="tk">featureData</a>[0]));</td></tr>
+<tr name="143" id="143">
+<td><a id="l143" class='ln'>143</a></td><td>                <a id="143c17" class="tk">uint8_T</a> <a id="143c25" class="tk">y0</a> = <a id="143c30" class="tk">pIic</a>-&gt;<a id="143c36" class="tk">Raw</a>[<a id="143c40" class="tk">Port</a>][<a id="143c46" class="tk">pIic</a>-&gt;<a id="143c52" class="tk">Actual</a>[<a id="143c59" class="tk">Port</a>]][<a id="143c66" class="tk">readlength</a> <a id="143c77" class="tk">-</a> 10];</td></tr>
+<tr name="144" id="144">
+<td><a id="l144" class='ln'>144</a></td><td>                <a id="144c17" class="tk">featureData</a>[1] = <a id="144c34" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="144c73" class="tk">y0</a>, 0, <a id="144c80" class="tk">LINETRACKINGFRAMEHEIGHT</a>);</td></tr>
+<tr name="145" id="145">
+<td><a id="l145" class='ln'>145</a></td><td>                <a id="145c17" class="tk">_EV3_DEBUG_PRINTF</a>((" y0 is %u \n", <a id="145c52" class="tk">featureData</a>[1]));</td></tr>
+<tr name="146" id="146">
+<td><a id="l146" class='ln'>146</a></td><td>                <a id="146c17" class="tk">uint8_T</a> <a id="146c25" class="tk">x1</a> = <a id="146c30" class="tk">pIic</a>-&gt;<a id="146c36" class="tk">Raw</a>[<a id="146c40" class="tk">Port</a>][<a id="146c46" class="tk">pIic</a>-&gt;<a id="146c52" class="tk">Actual</a>[<a id="146c59" class="tk">Port</a>]][<a id="146c66" class="tk">readlength</a> <a id="146c77" class="tk">-</a> 11];</td></tr>
+<tr name="147" id="147">
+<td><a id="l147" class='ln'>147</a></td><td>                <a id="147c17" class="tk">featureData</a>[2] = <a id="147c34" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="147c73" class="tk">x1</a>, 0, <a id="147c80" class="tk">LINETRACKINGFRAMEWIDTH</a>);</td></tr>
+<tr name="148" id="148">
+<td><a id="l148" class='ln'>148</a></td><td>                <a id="148c17" class="tk">_EV3_DEBUG_PRINTF</a>((" x1 is %u \n", <a id="148c52" class="tk">featureData</a>[2]));</td></tr>
+<tr name="149" id="149">
+<td><a id="l149" class='ln'>149</a></td><td>                <a id="149c17" class="tk">uint8_T</a> <a id="149c25" class="tk">y1</a> = <a id="149c30" class="tk">pIic</a>-&gt;<a id="149c36" class="tk">Raw</a>[<a id="149c40" class="tk">Port</a>][<a id="149c46" class="tk">pIic</a>-&gt;<a id="149c52" class="tk">Actual</a>[<a id="149c59" class="tk">Port</a>]][<a id="149c66" class="tk">readlength</a> <a id="149c77" class="tk">-</a> 12];</td></tr>
+<tr name="150" id="150">
+<td><a id="l150" class='ln'>150</a></td><td>                <a id="150c17" class="tk">featureData</a>[3] = <a id="150c34" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="150c73" class="tk">y1</a>, 0, <a id="150c80" class="tk">LINETRACKINGFRAMEHEIGHT</a>);</td></tr>
+<tr name="151" id="151">
+<td><a id="l151" class='ln'>151</a></td><td>                <a id="151c17" class="tk">_EV3_DEBUG_PRINTF</a>((" y1 is %u \n", <a id="151c52" class="tk">featureData</a>[3]));</td></tr>
+<tr name="152" id="152">
+<td><a id="l152" class='ln'>152</a></td><td>                <a id="152c17" class="tk">uint8_T</a> <a id="152c25" class="tk">flags</a> = <a id="152c33" class="tk">pIic</a>-&gt;<a id="152c39" class="tk">Raw</a>[<a id="152c43" class="tk">Port</a>][<a id="152c49" class="tk">pIic</a>-&gt;<a id="152c55" class="tk">Actual</a>[<a id="152c62" class="tk">Port</a>]][<a id="152c69" class="tk">readlength</a> <a id="152c80" class="tk">-</a> 14];</td></tr>
+<tr name="153" id="153">
+<td><a id="l153" class='ln'>153</a></td><td>                <span class="kw">if</span> (<a id="153c21" class="tk">flags</a> <a id="153c27" class="tk">==</a> 4) <span class="br">{</span></td></tr>
+<tr name="154" id="154">
+<td><a id="l154" class='ln'>154</a></td><td>                    <a id="154c21" class="tk">featureData</a>[4] = 1;</td></tr>
+<tr name="155" id="155">
+<td><a id="l155" class='ln'>155</a></td><td>                <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="156" id="156">
+<td><a id="l156" class='ln'>156</a></td><td>                    <a id="156c21" class="tk">featureData</a>[4] = 0;</td></tr>
+<tr name="157" id="157">
+<td><a id="l157" class='ln'>157</a></td><td>                <span class="br">}</span></td></tr>
+<tr name="158" id="158">
+<td><a id="l158" class='ln'>158</a></td><td>                <a id="158c17" class="tk">_EV3_DEBUG_PRINTF</a>((" Intersection Flag is %u \n", <a id="158c67" class="tk">featureData</a>[4]));</td></tr>
+<tr name="159" id="159">
+<td><a id="l159" class='ln'>159</a></td><td>            <span class="br">}</span> <span class="kw">else</span></td></tr>
+<tr name="160" id="160">
+<td><a id="l160" class='ln'>160</a></td><td>            <span class="br">{</span></td></tr>
+<tr name="161" id="161">
+<td><a id="l161" class='ln'>161</a></td><td>                <a id="161c17" class="tk">_EV3_DEBUG_PRINTF</a>(("Invalid data received from the Vision sensor.\n"));</td></tr>
+<tr name="162" id="162">
+<td><a id="l162" class='ln'>162</a></td><td>            <span class="br">}</span></td></tr>
+<tr name="163" id="163">
+<td><a id="l163" class='ln'>163</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="164" id="164">
+<td><a id="l164" class='ln'>164</a></td><td>      </td></tr>
+<tr name="165" id="165">
+<td><a id="l165" class='ln'>165</a></td><td><span class="br">}</span></td></tr>
+<tr name="166" id="166">
+<td><a id="l166" class='ln'>166</a></td><td></td></tr>
+<tr name="167" id="167">
+<td><a id="l167" class='ln'>167</a></td><td><span class="ct">// Terminate sensor</span></td></tr>
+<tr name="168" id="168">
+<td><a id="l168" class='ln'>168</a></td><td><span class="kw">void</span> <a id="168c6" class="tk">terminateCMUCam5Pixy2VisionSensor</a>(<a id="168c40" class="tk">uint8_T</a> <a id="168c48" class="tk">portNumber</a>)</td></tr>
+<tr name="169" id="169">
+<td><a id="l169" class='ln'>169</a></td><td><span class="br">{</span></td></tr>
+<tr name="170" id="170">
+<td><a id="l170" class='ln'>170</a></td><td>    <a id="170c5" class="tk">close</a>(<a id="170c11" class="tk">iicFile</a>);</td></tr>
+<tr name="171" id="171">
+<td><a id="l171" class='ln'>171</a></td><td>    <a id="171c5" class="tk">iicFile</a> = <a id="171c15" class="tk">-</a>1;</td></tr>
+<tr name="172" id="172">
+<td><a id="l172" class='ln'>172</a></td><td><span class="br">}</span></td></tr>
+<tr name="173" id="173">
+<td><a id="l173" class='ln'>173</a></td><td></td></tr>
+<tr name="174" id="174">
+<td><a id="l174" class='ln'>174</a></td><td><span class="ct">// Validate the sensor values, return zero for invalid values</span></td></tr>
+<tr name="175" id="175">
+<td><a id="l175" class='ln'>175</a></td><td><a id="175c1" class="tk">uint16_T</a> <a id="175c10" class="tk">validateCMUCam5Pixy2VisionSensorValues</a>(<a id="175c49" class="tk">uint16_T</a> <a id="175c58" class="tk">value</a>, <a id="175c65" class="tk">uint16_T</a> <a id="175c74" class="tk">min</a>, <a id="175c79" class="tk">uint16_T</a> <a id="175c88" class="tk">max</a>) </td></tr>
+<tr name="176" id="176">
+<td><a id="l176" class='ln'>176</a></td><td><span class="br">{</span></td></tr>
+<tr name="177" id="177">
+<td><a id="l177" class='ln'>177</a></td><td>    <a id="177c5" class="tk">uint16_T</a> <a id="177c14" class="tk">sensorvalue</a> = 0; </td></tr>
+<tr name="178" id="178">
+<td><a id="l178" class='ln'>178</a></td><td>    <span class="kw">if</span>( (<a id="178c10" class="tk">value</a> <a id="178c16" class="tk">&gt;=</a> <a id="178c19" class="tk">min</a>) <a id="178c24" class="tk">&amp;&amp;</a> (<a id="178c28" class="tk">value</a> <a id="178c34" class="tk">&lt;=</a> <a id="178c37" class="tk">max</a>)) <span class="br">{</span></td></tr>
+<tr name="179" id="179">
+<td><a id="l179" class='ln'>179</a></td><td>        <a id="179c9" class="tk">sensorvalue</a> = <a id="179c23" class="tk">value</a>;</td></tr>
+<tr name="180" id="180">
+<td><a id="l180" class='ln'>180</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="181" id="181">
+<td><a id="l181" class='ln'>181</a></td><td>    <span class="kw">return</span> <a id="181c12" class="tk">sensorvalue</a>;</td></tr>
+<tr name="182" id="182">
+<td><a id="l182" class='ln'>182</a></td><td><span class="br">}</span></td></tr>
+<tr name="183" id="183">
+<td><a id="l183" class='ln'>183</a></td><td></td></tr>
+<tr name="184" id="184">
+<td><a id="l184" class='ln'>184</a></td><td><span class="ct">// Convert decimal signature value to octal</span></td></tr>
+<tr name="185" id="185">
+<td><a id="l185" class='ln'>185</a></td><td><a id="185c1" class="tk">uint16_T</a> <a id="185c10" class="tk">convertDecimalToOctal</a>(<a id="185c32" class="tk">uint16_T</a> <a id="185c41" class="tk">decimalNumber</a>)</td></tr>
+<tr name="186" id="186">
+<td><a id="l186" class='ln'>186</a></td><td><span class="br">{</span></td></tr>
+<tr name="187" id="187">
+<td><a id="l187" class='ln'>187</a></td><td>    <a id="187c5" class="tk">uint16_T</a> <a id="187c14" class="tk">result</a> = <a id="187c23" class="tk">decimalNumber</a>;</td></tr>
+<tr name="188" id="188">
+<td><a id="l188" class='ln'>188</a></td><td>    <span class="kw">if</span>(<a id="188c8" class="tk">decimalNumber</a><a id="188c21" class="tk">&gt;</a>7)</td></tr>
+<tr name="189" id="189">
+<td><a id="l189" class='ln'>189</a></td><td>    <span class="br">{</span></td></tr>
+<tr name="190" id="190">
+<td><a id="l190" class='ln'>190</a></td><td>        <a id="190c9" class="tk">uint16_T</a> <a id="190c18" class="tk">octalNumber</a> = 0;</td></tr>
+<tr name="191" id="191">
+<td><a id="l191" class='ln'>191</a></td><td>        <a id="191c9" class="tk">uint16_T</a> <a id="191c18" class="tk">i</a> = 1;</td></tr>
+<tr name="192" id="192">
+<td><a id="l192" class='ln'>192</a></td><td>        <span class="kw">while</span> (<a id="192c16" class="tk">decimalNumber</a> <a id="192c30" class="tk">!=</a> 0)</td></tr>
+<tr name="193" id="193">
+<td><a id="l193" class='ln'>193</a></td><td>        <span class="br">{</span></td></tr>
+<tr name="194" id="194">
+<td><a id="l194" class='ln'>194</a></td><td>            <a id="194c13" class="tk">octalNumber</a> <a id="194c25" class="tk">+=</a> (<a id="194c29" class="tk">decimalNumber</a> <a id="194c43" class="tk">%</a> 8) <a id="194c48" class="tk">*</a> <a id="194c50" class="tk">i</a>;</td></tr>
+<tr name="195" id="195">
+<td><a id="l195" class='ln'>195</a></td><td>            <a id="195c13" class="tk">decimalNumber</a> <a id="195c27" class="tk">/=</a> 8;</td></tr>
+<tr name="196" id="196">
+<td><a id="l196" class='ln'>196</a></td><td>            <a id="196c13" class="tk">i</a> <a id="196c15" class="tk">*=</a> 10;</td></tr>
+<tr name="197" id="197">
+<td><a id="l197" class='ln'>197</a></td><td>        <span class="br">}</span></td></tr>
+<tr name="198" id="198">
+<td><a id="l198" class='ln'>198</a></td><td>        <a id="198c9" class="tk">result</a> = <a id="198c18" class="tk">octalNumber</a>;</td></tr>
+<tr name="199" id="199">
+<td><a id="l199" class='ln'>199</a></td><td>    <span class="br">}</span></td></tr>
+<tr name="200" id="200">
+<td><a id="l200" class='ln'>200</a></td><td>    <span class="kw">return</span> <a id="200c12" class="tk">result</a>;</td></tr>
+<tr name="201" id="201">
+<td><a id="l201" class='ln'>201</a></td><td><span class="br">}</span></td></tr>
+</table>
+</pre>
+</body>
+</html>

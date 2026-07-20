@@ -1,0 +1,14 @@
+rtiostream_utils.o rtiostream_utils.o: \
+ C:/PROGRA~1/MATLAB/R2020a/toolbox/coder/rtiostream/src/utils/rtiostream_utils.c \
+ C:/PROGRA~1/MATLAB/R2020a/toolbox/coder/rtiostream/src/utils/rtiostream_utils.h \
+ U:/4AE/Stage/Inverted_pendul_Python/Simulink/Real_Time_Simulation_Correction_ert_rtw/rtwtypes.h \
+ C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\ev3sourcerylite.instrset\CodeSourcery\lib\gcc\arm-none-linux-gnueabi\4.4.1\include/stddef.h \
+ C:/PROGRA~1/MATLAB/R2020a/toolbox/coder/rtiostream/src/rtiostream.h
+
+C:/PROGRA~1/MATLAB/R2020a/toolbox/coder/rtiostream/src/utils/rtiostream_utils.h:
+
+U:/4AE/Stage/Inverted_pendul_Python/Simulink/Real_Time_Simulation_Correction_ert_rtw/rtwtypes.h:
+
+C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\ev3sourcerylite.instrset\CodeSourcery\lib\gcc\arm-none-linux-gnueabi\4.4.1\include/stddef.h:
+
+C:/PROGRA~1/MATLAB/R2020a/toolbox/coder/rtiostream/src/rtiostream.h:
