@@ -1,6 +1,4 @@
-import sys
 import tkinter as tk
-from tkinter import ttk
 import matplotlib.pyplot as plt
 
 import animation as ma
@@ -19,7 +17,6 @@ class Mainwindow:
         self.wn = 5.0
         self.z = 0.69
         self.tf = 3
-        self.plot_type = 'Moving points'
         
         # main_layout
 
@@ -117,50 +114,23 @@ class Mainwindow:
         self.label3.pack(anchor="w")
         self.label4 = tk.Label(bottom_text_frame, text="Press 'a' : reset simulation", font=("Arial", 9, "underline", "bold"))
         self.label4.pack(anchor="w")
-        
-        # Combobox à droite
-        self.box = ttk.Combobox(bottom_frame, values=['Moving points', 'Moving curves', 'Curve filling'], state="readonly")
-        self.box.set('Moving points')
-        self.box.bind("<<ComboboxSelected>>", self.value_changed_plot)
-        self.box.pack(side="right", padx=5)
-        
-        self.label5 = tk.Label(bottom_frame, text="Plotting type :")
-        self.label5.pack(side="right", padx=5)
 
 
         # Bouton et Zone de message
         self.button = tk.Button(root, text="Start simulation", command=self.button_clicked, bg="#4C729F", fg="white", font=("Arial", 10, "bold"))
         self.button.pack(pady=10, ipadx=10, ipady=3)
-        
-        self.label2 = tk.Label(root, text="", fg="darkgreen")
-        self.label2.pack()
-
-        # Gestion de l'id de l'animation de fadeout
-        self.fade_job = None
 
     def button_clicked(self):
-        # Annulation du fadeout précédent s'il tourne encore
-        if self.fade_job is not None:
-            self.root.after_cancel(self.fade_job)
-            self.fade_job = None
-        
-        # Réinitialisation de l'affichage de la couleur du texte (opacité 1.0)
-        self.label2.config(fg="darkgreen")
 
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
 
         if not self.first_input:
-            self.anim.update_simu(K, lc, self.reference, self.tf, self.plot_type)
-            self.label2.config(text='Parameters have been updated, ready for next restart !!!')
+            self.anim.update_simu(K, lc, self.reference, self.tf)
         else:
-            self.anim = ma.MyAnimation(K, lc, self.reference, self.tf, self.plot_type)
+            self.anim = ma.MyAnimation(K, lc, self.reference, self.tf)
             self.button.config(text='Update inputs')
-            self.label2.config(text='Simulation started !')
             self.first_input = False
             plt.show()
-            
-        # Lancement de l'animation de disparition du texte (Fading de 2000 ms)
-        self.fade_out(2000)
 
     # Fonctions de changement de valeurs
     def value_changed_yc(self, value):
@@ -178,35 +148,6 @@ class Mainwindow:
     def value_changed_tf(self, value):
         self.tf = int(value)
         self.label_tf_value.config(text=str(self.tf))
-
-    def value_changed_plot(self, event):
-        value = self.box.get()
-        if value == 'Moving points':
-            self.moving_points = True
-        else:
-            self.moving_points = False
-        self.plot_type = value
-
-    def fade_out(self, duration_ms):
-        """Simule l'animation de fading en modifiant la couleur du texte vers le blanc du fond de la fenêtre de façon itérative."""
-        steps = 20
-        delay = duration_ms // steps
-        
-        def run_fade(step=0):
-            if step <= steps:
-                # Calcul de la transition de couleur du vert foncé vers le gris/blanc de fond
-                # Rapprochement progressif vers le gris par défaut de Tkinter
-                alpha = step / steps
-                # On fait disparaître le texte à la fin
-                if step == steps:
-                    self.label2.config(text="")
-                else:
-                    # Changement de couleur graduel pour mimer la transparence
-                    gray_val = int(0 + (240 * alpha)) # Part de 0 (Noir/Vert) vers 240 (Gris clair)
-                    hex_color = f"#{gray_val:02x}{200 if gray_val < 200 else gray_val:02x}{gray_val:02x}"
-                    self.label2.config(fg=hex_color)
-                    self.fade_job = self.root.after(delay, lambda: run_fade(step + 1))
-        run_fade()
 
 def main():
     root = tk.Tk()

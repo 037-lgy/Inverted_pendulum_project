@@ -52,7 +52,7 @@ R = 0.042
 r = 0.01
 
 class MyAnimation:
-    def __init__(self, K, lc, ref_ampl, time, mov_points):
+    def __init__(self, K, lc, ref_ampl, time):
         # Gain retour d'état
         self.K = K
 
@@ -243,7 +243,7 @@ class MyAnimation:
 
 
     # Pour changer les paramètre de commande et relancer le solver
-    def update_simu(self, K, lc, ampl, end_time, mov_points):
+    def update_simu(self, K, lc, ampl, end_time):
         self.K = K
         self.lc = lc
         self.current_yc = ampl
