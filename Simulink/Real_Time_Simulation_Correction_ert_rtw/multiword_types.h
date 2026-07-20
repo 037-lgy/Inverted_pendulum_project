@@ -6,9 +6,9 @@
  *
  * Code generated for Simulink model 'Real_Time_Simulation_Correction'.
  *
- * Model version                  : 1.917
+ * Model version                  : 1.920
  * Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
- * C/C++ source code generated on : Mon Jul 20 17:04:39 2026
+ * C/C++ source code generated on : Mon Jul 20 17:19:13 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM 9
