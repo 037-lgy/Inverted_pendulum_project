@@ -4,7 +4,6 @@ import matplotlib.animation as animation
 import NXTwaysim as nxt
 import control as ctrl
 from control import matlab
-from scipy.integrate import solve_ivp
 
 A = np.array([[0, 0, 1, 0], 
               [0, 0, 0, 1], 
@@ -59,6 +58,7 @@ class MyAnimation:
         # Gaine de consigne
         self.lc = lc
 
+        # Figure pour les courbes qui bougent
         self.fig, self.ax = plt.subplots()
 
         # Figure pour le robot qui bouge
@@ -67,8 +67,10 @@ class MyAnimation:
         # Amplitude de l'échelon
         self.current_yc = ref_ampl
 
+        # Temps d'affichage des courbes
         self.time = time
 
+        # Temps entre 2 frames
         self.dt = 0.001
         self.steps_per_frame = 20
 
@@ -92,6 +94,7 @@ class MyAnimation:
         self.u_history = [0]
         self.yc_history = [0]
 
+        #Initialisation de la référence
         self.reference = 0
 
         # Initialise les courbes à afficher et la figure
@@ -100,29 +103,21 @@ class MyAnimation:
         self.line3 = self.ax.plot([0], [0], label='psi', color='g', linewidth=1)[0]
         self.line4 = self.ax.plot([0], [0], label='yc', color='y', linewidth=1)[0]
         
-        # Initialise les points à afficher
-        self.point1 = self.ax.plot([], [], ls="none", marker="o", color='b', markersize=3)[0]
-        self.point2 = self.ax.plot([], [], ls="none", marker='o', color='r', markersize=3)[0]
-        self.point3 = self.ax.plot([], [], ls="none", marker='o', color='g', markersize=3)[0]
-        self.point4 = self.ax.plot([], [], ls="none", marker='o', color='y', markersize=3)[0]
-        
-        # Initialise les bornes des axes en fonction de la valeur des courbes
+        # Initialise les bornes des axes pour l'affichage des courbes
         self.ax.set(xlim=[0, self.time], ylim=[-8, 8], xlabel='Time [s]', ylabel='Amplitude')
         self.ax.grid(True)
         self.ax.legend()
 
-        self.moving_type = 'Moving curves'
-
         self.round = np.arange(0, 2*np.pi, 0.1)
-        self.A_init = [self.y, 0]
-        self.B_init = [self.A_init[0], R]
-        self.C_init = [self.B_init[0]+H*np.sin(self.x0[1]), self.B_init[1]+H*np.cos(self.x0[1])]
+        A_init = [self.y, 0]
+        B_init = [A_init[0], R]
+        C_init = [B_init[0]+H*np.sin(self.x0[1]), B_init[1]+H*np.cos(self.x0[1])]
         
         # Initialise les parties du robot à afficher
-        self.uppermass = self.ax2.plot(self.C_init[0]+r*np.cos(self.round), self.C_init[1]+r*np.sin(self.round), 'r', linewidth=2)[0]
-        self.wheelmark = self.ax2.plot([self.B_init[0], self.B_init[0]+R*np.sin(self.x0[0])], [self.B_init[1], self.B_init[1]+R*np.cos(self.x0[0])], 'b-', linewidth=2)[0]
-        self.rod = self.ax2.plot([self.B_init[0], self.C_init[0]], [self.B_init[1], self.C_init[1]], 'r-', linewidth=3)[0]
-        self.wheel = self.ax2.plot(self.B_init[0]+R*np.cos(self.round), self.B_init[1]+R*np.sin(self.round), 'r', linewidth=2)[0]
+        self.uppermass = self.ax2.plot(C_init[0]+r*np.cos(self.round), C_init[1]+r*np.sin(self.round), 'r', linewidth=2)[0]
+        self.wheelmark = self.ax2.plot([B_init[0], B_init[0]+R*np.sin(self.x0[0])], [B_init[1], B_init[1]+R*np.cos(self.x0[0])], 'b-', linewidth=2)[0]
+        self.rod = self.ax2.plot([B_init[0], C_init[0]], [B_init[1], C_init[1]], 'r-', linewidth=3)[0]
+        self.wheel = self.ax2.plot(B_init[0]+R*np.cos(self.round), B_init[1]+R*np.sin(self.round), 'r', linewidth=2)[0]
         # Simulation time
         self.printtime = self.ax2.text(-0.3, 0.3, f'Simulation time : {str(0)}', fontsize=12)
         # Le sol en dessous
@@ -134,24 +129,32 @@ class MyAnimation:
         # Variable pour mettre pause/play
         self.paused = True
 
+        # Variable pour savoir quand on appuie sur 'a' <=> reset de l'affichage
         self.reset = True
 
-        self.ani2 = animation.FuncAnimation(fig=self.fig2, func=self.update2, interval=10, repeat=False, blit=False, cache_frame_data=False)
+        # Création des animations : ani pour les courbes et ani2 pour le robot
         self.ani = animation.FuncAnimation(fig=self.fig, func=self.update, interval=10, repeat=False, blit=False, cache_frame_data=False)
+        self.ani2 = animation.FuncAnimation(fig=self.fig2, func=self.update2, interval=10, repeat=False, blit=False, cache_frame_data=False)
+        
+        # Démarrage des animations en étant en pause
         self.ani.pause()
         self.ani2.pause()
-        self.started = False
-        # Relier le fait de mettre sur pause et lancer la simulation lors d'appuis sur 'a' et espace
-        self.fig.canvas.mpl_connect('key_press_event', self.toggle_pause)
-        self.fig2.canvas.mpl_connect('key_press_event', self.toggle_pause)
 
+        # Variable pôur savoir si on a commencé
+        self.started = False
+
+        # Relier le fait de mettre sur pause et lancer la simulation lors d'appuis sur 'a' et espace
+        self.fig.canvas.mpl_connect('key_press_event', self.toggle_status)
+        self.fig2.canvas.mpl_connect('key_press_event', self.toggle_status)
+
+        # Mettre un nom aux fenêtres d'affichage
         self.fig2.canvas.manager.set_window_title('Gyropode')
         self.fig.canvas.manager.set_window_title("Curves' plot")
 
     def compute_simulation(self):
         for _ in range(self.steps_per_frame):
             self.current_t += self.dt
-            dx = nxt.xdot_segment(self.current_t, self.previous_x, self.K, self.lc, self.current_yc)
+            dx = nxt.xdot(self.current_t, self.previous_x, self.K, self.lc, self.current_yc)
             self.x = [self.previous_x[i] + self.dt * dx[i] for i in range(4)]
             self.previous_x = self.x
         
@@ -159,6 +162,8 @@ class MyAnimation:
         self.psi_nlin = self.x[1]
         self.y = R*self.theta_nlin
 
+
+        # On ajoute les nouvelles valeurs dans les historiques (pour les courbes)
         self.t_history.append(self.current_t)
         self.theta_history.append(self.theta_nlin)
         self.psi_history.append(self.psi_nlin)
@@ -178,6 +183,8 @@ class MyAnimation:
         if not self.started:
             return (self.line1, self.line2, self.line3, self.line4)
 
+
+        # Avant 1 seconde, on affiche juste les historiques des courbes
         if len(self.t_history) <= 1:
 
             self.line1.set_xdata(self.t_history)
@@ -192,6 +199,7 @@ class MyAnimation:
 
             return (self.line1, self.line2, self.line3, self.line4)
         
+        # Sinon on gère l'affichage des courbes avec des masques pour que l'affichage soit clair
         t_arr = np.array(self.t_history)
         u_arr = np.array(self.u_history)
         theta_arr = np.array(self.theta_history)
@@ -227,7 +235,10 @@ class MyAnimation:
     def update2(self, frame):
         if not self.started:
             return(self.uppermass, self.wheelmark, self.rod, self.wheel, self.printtime)
+        # On relance le solveur
         self.compute_simulation()
+
+        # On calcule ensuite nos valeurs pour mettre à jour le gyropode
         A = [self.y, 0]
         B = [A[0], R]
         C = [B[0]+H*np.sin(self.psi_nlin), B[1]+H*np.cos(self.psi_nlin)]
@@ -242,7 +253,7 @@ class MyAnimation:
         return(self.uppermass, self.wheelmark, self.rod, self.wheel, self.printtime)
 
 
-    # Pour changer les paramètre de commande et relancer le solver
+    # MAJ de nos variables pour changer la dynamique, la consigne et le temps d'affihcage des courbes (géré par interface)
     def update_simu(self, K, lc, ampl, end_time):
         self.K = K
         self.lc = lc
@@ -252,10 +263,12 @@ class MyAnimation:
 
 
     # Gestion de la mise en pause et recommencement (et fin d'animation)
-    def toggle_pause(self, event):
-        if event.key != ' ' and event.key != 'a': #Mettre pause que si on appuie sur espace et recommencer si on appuie sur a
+    def toggle_status(self, event):
+        # Mettre pause que si on appuie sur espace et recommencer si on appuie sur a
+        if event.key != ' ' and event.key != 'a':
             return
         
+        # Gestion de ce qui se passe quand on appuie sur espace
         if event.key == ' ' :
             if not self.started:
                 self.started = True
@@ -268,8 +281,10 @@ class MyAnimation:
                 self.ani2.pause()
                 self.ani.pause()
                 self.paused = True
+        # Gestion de ce qui se passe quand on appuie sur 'a'
         elif event.key == 'a':
             if self.paused == True:
+                # Réinitialisation de toutes nos valeurs et de nos figures
                 self.x = [0, 0, 0, 0]
                 self.theta_nlin = 0
                 self.psi_nlin = 0
@@ -289,11 +304,6 @@ class MyAnimation:
                 self.line2.set_data([], [])
                 self.line3.set_data([], [])
                 self.line4.set_data([], [])
-                self.point1.set_data([], [])
-                self.point2.set_data([], [])
-                self.point3.set_data([], [])
-                self.point4.set_data([], [])
-
 
                 self.uppermass.set_data([], [])
                 self.wheelmark.set_data([], [])
@@ -308,8 +318,4 @@ class MyAnimation:
                 self.printtime = self.ax2.text(-0.3, 0.3, f'Simulation time : {str(0)}', fontsize=12)
 
                 self.fig2.canvas.draw()
-                self.fig.canvas.draw()          
-
-
-#anim = MyAnimation(np.array([[-5.5148, -34.12178, -1.7862, -2.8974]]), -5.5148, 1, -1, 3, 'Moving curves')
-#plt.show()
+                self.fig.canvas.draw()

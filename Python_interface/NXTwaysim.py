@@ -14,7 +14,7 @@ Jw = m * R**(2) / 2  # wheel inertia moment [kgm^2]
 
 ####################################################################
 M = 0.8  # body weight [kg] 
-W = 0.042  # body width [m]
+W = 0.152  # body width [m]
 D = 0.055  # body depth [m]
 H = 0.160  # body height [m]
 
@@ -41,59 +41,11 @@ beta = n * Kt * Kb / Rm + fm
 alpha = n * Kt / Rm
 tmp = beta + fw
 
-
-# Parametre de la fonction :
-# t : le temps de simulation
-# x : l'état à un instant t
-# Kin : le gain de retour d'état
-# lcin : le prégain
-# yc : la consigne à un instant t : une fontion qui prend en argument les 2 suivant :
-# start_time : le temps de début de l'échelon
-# amplitude : l'amplitude de l'échelon en entrée
-
-# Paramère de sortie : xdot
-
-def xdot(t, xin, Kin, lcin, yc, start_time_input, amplitude):
-    # positionvector
+def xdot(t, xin, Kin, lcin, yc):
+    # position vector
     theta = xin[0]  # angular position of thewheel
     psi = xin[1]  # angular positionof the gyropode
-    # speedvector
-    dtheta = xin[2]  # angular speed of thewheel
-    dpsi = xin[3]  # angularspeed of the gyropode
-
-    # compute u
-    x = np.reshape(xin, (4, 1))
-    uth = -(np.dot(Kin, x)) + lcin * yc(t, start_time_input, amplitude)
-    uth = uth[0, 0]
-    u = np.clip(uth, -8.0, 8.0)
-
-    # computes the value of the x dot vector (state derivative)
-
-    i = 1 / Rm * (u + Kb * (dpsi - dtheta))
-
-    Ftheta = 2 * alpha * u - 2 * beta * (dtheta - dpsi) - 2 * fw * dtheta
-
-    Fpsi = -2 * alpha * u + 2 * beta * (dtheta - dpsi)
-
-    M1 = np.array([[(2 * m + M) * R ** 2 + 2 * Jw + 2 * n ** 2 * Jm, M * L * R * math.cos(psi) - 2 * n ** 2 * Jm],
-                   [M * L * R * math.cos(psi) - 2 * n ** 2 * Jm, M * L ** 2 + Jpsi + 2 * n ** 2 * Jm]])
-    M2 = np.array([[Ftheta + M * L * R * dpsi ** 2 * math.sin(psi)],
-                   [Fpsi + M * g * L * math.sin(psi)]])
-
-    var = np.linalg.solve(M1, M2)
-
-    xdot1 = dtheta
-    xdot2 = dpsi
-    xdot3 = var[0, 0]
-    xdot4 = var[1, 0]
-
-    return [xdot1, xdot2, xdot3, xdot4]
-
-def xdot_segment(t, xin, Kin, lcin, yc):
-    # positionvector
-    theta = xin[0]  # angular position of thewheel
-    psi = xin[1]  # angular positionof the gyropode
-    # speedvector
+    # speed vector
     dtheta = xin[2]  # angular speed of thewheel
     dpsi = xin[3]  # angularspeed of the gyropode
 

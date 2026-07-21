@@ -11,46 +11,62 @@ class Mainwindow:
         self.root.title("Simulations's interactive interface")
         self.root.geometry("500x400")
         
+        # Création de l'animation
         self.anim = None
-        self.first_input = True
-        self.reference = 0
-        self.wn = 5.0
-        self.z = 0.69
-        self.tf = 3
-        
-        # main_layout
 
-        # Texte en haut, au milieu
+        # Variable pour le tout début de la simulation
+        self.first_input = True
+
+        # Référence initiale du slider yc
+        self.reference = 0
+
+        # Référence initiale du slider wn
+        self.wn = 5.0
+
+        # Référence initiale du slider z
+        self.z = 0.69
+
+        # Référence initiale du slider tf
+        self.tf = 3
+
+        # Premier texte en haut, au milieu
         self.label = tk.Label(root, text="Configure your parameters below :")
         self.label.pack(pady=10)
 
-        # slider_layout
+        # Layout pour les slider alignés horizontalement
         slider_frame = tk.Frame(root)
         slider_frame.pack(pady=10, fill="x", padx=10)
         
-        # Pour aligner les 4 blocs côte à côte proprement, on utilise .grid() dans le slider_frame
-        # Configurer l'expansion des colonnes pour un espacement régulier
+        # Pour aligner les 4 blocs côte à côte proprement, on utilise .grid() dans le slider_frame, avec 8 colonnes
         for c in range(8):
             slider_frame.grid_columnconfigure(c, weight=1)
 
-        # Bloc yc
+        # Bloc yc ------------------------------------------------------------------------
+
+        # Nom du slider
         self.yc_title = tk.Label(slider_frame, text="yc", font=("Arial", 10, "bold"))
         self.yc_title.grid(row=0, column=0, sticky="n")
         
+        # Valeur max du slider
         self.label_max_yc = tk.Label(slider_frame, text="30", fg="grey")
         self.label_max_yc.grid(row=1, column=0)
         
+        # Slider
         self.slider_yc = tk.Scale(slider_frame, from_=30, to=-30, orient="vertical", length=150, command=self.value_changed_yc)
         self.slider_yc.set(0)
         self.slider_yc.grid(row=2, column=0, pady=5)
         
+        # Valeur min du slideur
         self.label_min_yc = tk.Label(slider_frame, text="-30", fg="grey")
         self.label_min_yc.grid(row=3, column=0)
         
+        # Valeur actuelle du slideur
         self.label_yc_value = tk.Label(slider_frame, text="0", font=("Arial", 10, "bold"))
         self.label_yc_value.grid(row=2, column=1, padx=5)
 
-        # Bloc wn
+        # Bloc wn -----------------------------------------------------------------------
+
+
         self.wn_title = tk.Label(slider_frame, text="wn", font=("Arial", 10, "bold"))
         self.wn_title.grid(row=0, column=2, sticky="n")
         
@@ -67,7 +83,9 @@ class Mainwindow:
         self.label_wn_value = tk.Label(slider_frame, text="5.0", font=("Arial", 10, "bold"))
         self.label_wn_value.grid(row=2, column=3, padx=5)
 
-        # Bloc z
+        # Bloc z ------------------------------------------------------------------------
+
+
         self.z_title = tk.Label(slider_frame, text="z", font=("Arial", 10, "bold"))
         self.z_title.grid(row=0, column=4, sticky="n")
         
@@ -84,14 +102,16 @@ class Mainwindow:
         self.label_z_value = tk.Label(slider_frame, text="0.69", font=("Arial", 10, "bold"))
         self.label_z_value.grid(row=2, column=5, padx=5)
 
-        # Bloc tspan
+        # Bloc tspan --------------------------------------------------------------------
+
+
         self.tf_title = tk.Label(slider_frame, text="tspan", font=("Arial", 10, "bold"))
         self.tf_title.grid(row=0, column=6, sticky="n")
         
         self.label_max_tf = tk.Label(slider_frame, text="40", fg="grey")
         self.label_max_tf.grid(row=1, column=6)
         
-        self.slider_tf = tk.Scale(slider_frame, from_=40, to=0, orient="vertical", length=150, command=self.value_changed_tf)
+        self.slider_tf = tk.Scale(slider_frame, from_=40, to=2, orient="vertical", length=150, command=self.value_changed_tf)
         self.slider_tf.set(3)
         self.slider_tf.grid(row=2, column=6, pady=5)
         
@@ -102,24 +122,18 @@ class Mainwindow:
         self.label_tf_value.grid(row=2, column=7, padx=5)
 
 
-        # bottom_layout
-        bottom_frame = tk.Frame(root)
-        bottom_frame.pack(pady=15, fill="x", padx=20)
+        # Zone du bas  -----------------------------------------------------------------
         
-        # Zone de texte gauche
-        bottom_text_frame = tk.Frame(bottom_frame)
-        bottom_text_frame.pack(side="left")
-        
-        self.label3 = tk.Label(bottom_text_frame, text="Press spacebar : pause/play", font=("Arial", 9, "underline", "bold"))
-        self.label3.pack(anchor="w")
-        self.label4 = tk.Label(bottom_text_frame, text="Press 'a' : reset simulation", font=("Arial", 9, "underline", "bold"))
-        self.label4.pack(anchor="w")
+        self.label3 = tk.Label(root, text="Press spacebar : pause/play", font=("Arial", 10, "underline", "bold"))
+        self.label3.pack(pady=1)
+        self.label4 = tk.Label(root, text="Press 'a' : reset simulation", font=("Arial", 10, "underline", "bold"))
+        self.label4.pack(pady=1)
 
-
-        # Bouton et Zone de message
+        # Bouton de lancement et d'update de la simulation
         self.button = tk.Button(root, text="Start simulation", command=self.button_clicked, bg="#4C729F", fg="white", font=("Arial", 10, "bold"))
         self.button.pack(pady=10, ipadx=10, ipady=3)
 
+    # Fonction appelée quand on appuie sur le bouton
     def button_clicked(self):
 
         (K, lc) = ma.compute_K_lc(self.wn, self.z)
@@ -132,7 +146,7 @@ class Mainwindow:
             self.first_input = False
             plt.show()
 
-    # Fonctions de changement de valeurs
+    # Fonctions de changement des valeurs des sliders
     def value_changed_yc(self, value):
         self.reference = int(value)
         self.label_yc_value.config(text=str(self.reference))
