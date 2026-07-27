@@ -67,6 +67,8 @@ class MyAnimation:
         # Amplitude de l'échelon
         self.current_yc = ref_ampl
 
+
+
         # Temps d'affichage des courbes
         self.time = time
 
@@ -95,7 +97,7 @@ class MyAnimation:
         self.yc_history = [0]
 
         #Initialisation de la référence
-        self.reference = 0
+        self.reference = ref_ampl
 
         # Initialise les courbes à afficher et la figure
         self.line1 = self.ax.plot([0], [0], label='u', color='b', linewidth=1)[0]
@@ -109,15 +111,15 @@ class MyAnimation:
         self.ax.legend()
 
         self.round = np.arange(0, 2*np.pi, 0.1)
-        A_init = [self.y, 0]
-        B_init = [A_init[0], R]
-        C_init = [B_init[0]+H*np.sin(self.x0[1]), B_init[1]+H*np.cos(self.x0[1])]
+        self.A_init = [self.y, 0]
+        self.B_init = [self.A_init[0], R]
+        self.C_init = [self.B_init[0]+H*np.sin(self.x0[1]), self.B_init[1]+H*np.cos(self.x0[1])]
         
         # Initialise les parties du robot à afficher
-        self.uppermass = self.ax2.plot(C_init[0]+r*np.cos(self.round), C_init[1]+r*np.sin(self.round), 'r', linewidth=2)[0]
-        self.wheelmark = self.ax2.plot([B_init[0], B_init[0]+R*np.sin(self.x0[0])], [B_init[1], B_init[1]+R*np.cos(self.x0[0])], 'b-', linewidth=2)[0]
-        self.rod = self.ax2.plot([B_init[0], C_init[0]], [B_init[1], C_init[1]], 'r-', linewidth=3)[0]
-        self.wheel = self.ax2.plot(B_init[0]+R*np.cos(self.round), B_init[1]+R*np.sin(self.round), 'r', linewidth=2)[0]
+        self.uppermass = self.ax2.plot(self.C_init[0]+r*np.cos(self.round), self.C_init[1]+r*np.sin(self.round), 'r', linewidth=2)[0]
+        self.wheelmark = self.ax2.plot([self.B_init[0], self.B_init[0]+R*np.sin(self.x0[0])], [self.B_init[1], self.B_init[1]+R*np.cos(self.x0[0])], 'b-', linewidth=2)[0]
+        self.rod = self.ax2.plot([self.B_init[0], self.C_init[0]], [self.B_init[1], self.C_init[1]], 'r-', linewidth=3)[0]
+        self.wheel = self.ax2.plot(self.B_init[0]+R*np.cos(self.round), self.B_init[1]+R*np.sin(self.round), 'r', linewidth=2)[0]
         # Simulation time
         self.printtime = self.ax2.text(-0.3, 0.3, f'Simulation time : {str(0)}', fontsize=12)
         # Le sol en dessous
