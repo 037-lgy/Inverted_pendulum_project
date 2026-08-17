@@ -8,7 +8,7 @@
  *
  * Model version                  : 1.920
  * Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
- * C/C++ source code generated on : Mon Jul 27 10:28:57 2026
+ * C/C++ source code generated on : Mon Aug 17 11:10:16 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM 9
@@ -206,9 +206,24 @@ Parameters_RT_Sim_Corr RT_Sim_Corr_P = {
   0.0F,
 
   /* Computed Parameter: UnitDelay_InitialCon_g5o4mik1am
-   * Referenced by: '<Root>/Unit Delay'
+   * Referenced by: '<S1>/Unit Delay'
    */
-  { 0.0F, 0.0F, 0.0F, 0.0F },
+  0.0F,
+
+  /* Computed Parameter: UnitDelay1_InitialCondition
+   * Referenced by: '<S1>/Unit Delay1'
+   */
+  0.0F,
+
+  /* Computed Parameter: UnitDelay2_InitialCondition
+   * Referenced by: '<S1>/Unit Delay2'
+   */
+  0.0F,
+
+  /* Computed Parameter: UnitDelay3_InitialCondition
+   * Referenced by: '<S1>/Unit Delay3'
+   */
+  0.0F,
 
   /* Computed Parameter: Gain2_Gain_ezbw1uq0ur
    * Referenced by: '<Root>/Gain2'
@@ -220,7 +235,7 @@ Parameters_RT_Sim_Corr RT_Sim_Corr_P = {
    */
   0.0F,
 
-  /* Computed Parameter: UnitDelay3_InitialCondition
+  /* Computed Parameter: UnitDelay3_InitialCo_lmdiiaxmks
    * Referenced by: '<S21>/UnitDelay3'
    */
   0.0F,

@@ -128,8 +128,8 @@
       paramMap.sections(4) = section;
       clear section
       
-      section.nData     = 27;
-      section.data(27)  = dumData; %prealloc
+      section.nData     = 30;
+      section.data(30)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_P.UnitDelay_InitialCondition
 	  section.data(1).logicalSrcIdx = 18;
@@ -207,37 +207,49 @@
 	  section.data(19).logicalSrcIdx = 36;
 	  section.data(19).dtTransOffset = 18;
 	
-	  ;% RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur
+	  ;% RT_Sim_Corr_P.UnitDelay1_InitialCondition
 	  section.data(20).logicalSrcIdx = 37;
-	  section.data(20).dtTransOffset = 22;
+	  section.data(20).dtTransOffset = 19;
 	
-	  ;% RT_Sim_Corr_P.Constant6_Value_hyqvqn5fwb
+	  ;% RT_Sim_Corr_P.UnitDelay2_InitialCondition
 	  section.data(21).logicalSrcIdx = 38;
-	  section.data(21).dtTransOffset = 26;
+	  section.data(21).dtTransOffset = 20;
 	
 	  ;% RT_Sim_Corr_P.UnitDelay3_InitialCondition
 	  section.data(22).logicalSrcIdx = 39;
-	  section.data(22).dtTransOffset = 27;
+	  section.data(22).dtTransOffset = 21;
+	
+	  ;% RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur
+	  section.data(23).logicalSrcIdx = 40;
+	  section.data(23).dtTransOffset = 22;
+	
+	  ;% RT_Sim_Corr_P.Constant6_Value_hyqvqn5fwb
+	  section.data(24).logicalSrcIdx = 41;
+	  section.data(24).dtTransOffset = 26;
+	
+	  ;% RT_Sim_Corr_P.UnitDelay3_InitialCo_lmdiiaxmks
+	  section.data(25).logicalSrcIdx = 42;
+	  section.data(25).dtTransOffset = 27;
 	
 	  ;% RT_Sim_Corr_P.Constant7_Value
-	  section.data(23).logicalSrcIdx = 40;
-	  section.data(23).dtTransOffset = 28;
+	  section.data(26).logicalSrcIdx = 43;
+	  section.data(26).dtTransOffset = 28;
 	
 	  ;% RT_Sim_Corr_P.Constant5_Value_jhrxeiwmg5
-	  section.data(24).logicalSrcIdx = 41;
-	  section.data(24).dtTransOffset = 29;
+	  section.data(27).logicalSrcIdx = 44;
+	  section.data(27).dtTransOffset = 29;
 	
 	  ;% RT_Sim_Corr_P.DiscreteFilter_NumCoef
-	  section.data(25).logicalSrcIdx = 42;
-	  section.data(25).dtTransOffset = 30;
+	  section.data(28).logicalSrcIdx = 45;
+	  section.data(28).dtTransOffset = 30;
 	
 	  ;% RT_Sim_Corr_P.DiscreteFilter_DenCoef
-	  section.data(26).logicalSrcIdx = 43;
-	  section.data(26).dtTransOffset = 31;
+	  section.data(29).logicalSrcIdx = 46;
+	  section.data(29).dtTransOffset = 31;
 	
 	  ;% RT_Sim_Corr_P.DiscreteFilter_InitialStates
-	  section.data(27).logicalSrcIdx = 44;
-	  section.data(27).dtTransOffset = 33;
+	  section.data(30).logicalSrcIdx = 47;
+	  section.data(30).dtTransOffset = 33;
 	
       nTotData = nTotData + section.nData;
       paramMap.sections(5) = section;
@@ -247,15 +259,15 @@
       section.data(3)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_P.Constant_Value_aljrxhz2pj
-	  section.data(1).logicalSrcIdx = 45;
+	  section.data(1).logicalSrcIdx = 48;
 	  section.data(1).dtTransOffset = 0;
 	
 	  ;% RT_Sim_Corr_P.Speaker_p2
-	  section.data(2).logicalSrcIdx = 46;
+	  section.data(2).logicalSrcIdx = 49;
 	  section.data(2).dtTransOffset = 1;
 	
 	  ;% RT_Sim_Corr_P.Speaker_p4
-	  section.data(3).logicalSrcIdx = 47;
+	  section.data(3).logicalSrcIdx = 50;
 	  section.data(3).dtTransOffset = 2;
 	
       nTotData = nTotData + section.nData;
@@ -266,19 +278,19 @@
       section.data(4)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_P.FixPtUnitDelay2_InitialConditio
-	  section.data(1).logicalSrcIdx = 48;
+	  section.data(1).logicalSrcIdx = 51;
 	  section.data(1).dtTransOffset = 0;
 	
 	  ;% RT_Sim_Corr_P.FixPtConstant_Value
-	  section.data(2).logicalSrcIdx = 49;
+	  section.data(2).logicalSrcIdx = 52;
 	  section.data(2).dtTransOffset = 1;
 	
 	  ;% RT_Sim_Corr_P.Speaker_p1
-	  section.data(3).logicalSrcIdx = 50;
+	  section.data(3).logicalSrcIdx = 53;
 	  section.data(3).dtTransOffset = 2;
 	
 	  ;% RT_Sim_Corr_P.ManualSwitch_CurrentSetting
-	  section.data(4).logicalSrcIdx = 51;
+	  section.data(4).logicalSrcIdx = 54;
 	  section.data(4).dtTransOffset = 3;
 	
       nTotData = nTotData + section.nData;
@@ -428,44 +440,56 @@
       dworkMap.sections(1) = section;
       clear section
       
-      section.nData     = 9;
-      section.data(9)  = dumData; %prealloc
+      section.nData     = 12;
+      section.data(12)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_DWork.UnitDelay_DSTATE
 	  section.data(1).logicalSrcIdx = 3;
 	  section.data(1).dtTransOffset = 0;
 	
-	  ;% RT_Sim_Corr_DWork.UnitDelay3_DSTATE
+	  ;% RT_Sim_Corr_DWork.UnitDelay1_DSTATE
 	  section.data(2).logicalSrcIdx = 4;
-	  section.data(2).dtTransOffset = 4;
+	  section.data(2).dtTransOffset = 1;
+	
+	  ;% RT_Sim_Corr_DWork.UnitDelay2_DSTATE
+	  section.data(3).logicalSrcIdx = 5;
+	  section.data(3).dtTransOffset = 2;
+	
+	  ;% RT_Sim_Corr_DWork.UnitDelay3_DSTATE
+	  section.data(4).logicalSrcIdx = 6;
+	  section.data(4).dtTransOffset = 3;
+	
+	  ;% RT_Sim_Corr_DWork.UnitDelay3_DSTATE_mj2mn2t3em
+	  section.data(5).logicalSrcIdx = 7;
+	  section.data(5).dtTransOffset = 4;
 	
 	  ;% RT_Sim_Corr_DWork.DiscreteFilter_states
-	  section.data(3).logicalSrcIdx = 5;
-	  section.data(3).dtTransOffset = 5;
+	  section.data(6).logicalSrcIdx = 8;
+	  section.data(6).dtTransOffset = 5;
 	
 	  ;% RT_Sim_Corr_DWork.UnitDelay_DSTATE_cfkvxtl130
-	  section.data(4).logicalSrcIdx = 6;
-	  section.data(4).dtTransOffset = 6;
+	  section.data(7).logicalSrcIdx = 9;
+	  section.data(7).dtTransOffset = 6;
 	
 	  ;% RT_Sim_Corr_DWork.UnitDelay_DSTATE_hzuovbre5y
-	  section.data(5).logicalSrcIdx = 7;
-	  section.data(5).dtTransOffset = 7;
+	  section.data(8).logicalSrcIdx = 10;
+	  section.data(8).dtTransOffset = 7;
 	
 	  ;% RT_Sim_Corr_DWork.FixPtUnitDelay1_DSTATE
-	  section.data(6).logicalSrcIdx = 8;
-	  section.data(6).dtTransOffset = 8;
+	  section.data(9).logicalSrcIdx = 11;
+	  section.data(9).dtTransOffset = 8;
 	
 	  ;% RT_Sim_Corr_DWork.UnitDelay_DSTATE_orvhqhlbcp
-	  section.data(7).logicalSrcIdx = 9;
-	  section.data(7).dtTransOffset = 9;
+	  section.data(10).logicalSrcIdx = 12;
+	  section.data(10).dtTransOffset = 9;
 	
 	  ;% RT_Sim_Corr_DWork.UnitDelay_DSTATE_mjna1kxy33
-	  section.data(8).logicalSrcIdx = 10;
-	  section.data(8).dtTransOffset = 10;
+	  section.data(11).logicalSrcIdx = 13;
+	  section.data(11).dtTransOffset = 10;
 	
 	  ;% RT_Sim_Corr_DWork.DiscreteFilter_tmp
-	  section.data(9).logicalSrcIdx = 11;
-	  section.data(9).dtTransOffset = 11;
+	  section.data(12).logicalSrcIdx = 14;
+	  section.data(12).dtTransOffset = 11;
 	
       nTotData = nTotData + section.nData;
       dworkMap.sections(2) = section;
@@ -475,7 +499,7 @@
       section.data(1)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_DWork.FromWs_IWORK.PrevIndex
-	  section.data(1).logicalSrcIdx = 12;
+	  section.data(1).logicalSrcIdx = 15;
 	  section.data(1).dtTransOffset = 0;
 	
       nTotData = nTotData + section.nData;
@@ -486,7 +510,7 @@
       section.data(1)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_DWork.FixPtUnitDelay2_DSTATE
-	  section.data(1).logicalSrcIdx = 13;
+	  section.data(1).logicalSrcIdx = 16;
 	  section.data(1).dtTransOffset = 0;
 	
       nTotData = nTotData + section.nData;
@@ -497,11 +521,11 @@
       section.data(2)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_DWork.GyroCalibration_SubsysRanBC
-	  section.data(1).logicalSrcIdx = 14;
+	  section.data(1).logicalSrcIdx = 17;
 	  section.data(1).dtTransOffset = 0;
 	
 	  ;% RT_Sim_Corr_DWork.BalanceandDriveControl_SubsysRa
-	  section.data(2).logicalSrcIdx = 15;
+	  section.data(2).logicalSrcIdx = 18;
 	  section.data(2).dtTransOffset = 1;
 	
       nTotData = nTotData + section.nData;
@@ -512,7 +536,7 @@
       section.data(1)  = dumData; %prealloc
       
 	  ;% RT_Sim_Corr_DWork.BalanceandDriveControl_MODE
-	  section.data(1).logicalSrcIdx = 17;
+	  section.data(1).logicalSrcIdx = 20;
 	  section.data(1).dtTransOffset = 0;
 	
       nTotData = nTotData + section.nData;
@@ -545,8 +569,8 @@
   ;%
 
 
-  targMap.checksum0 = 2336633234;
-  targMap.checksum1 = 2221029277;
-  targMap.checksum2 = 2507445849;
-  targMap.checksum3 = 773997457;
+  targMap.checksum0 = 2553972110;
+  targMap.checksum1 = 963568288;
+  targMap.checksum2 = 3669205218;
+  targMap.checksum3 = 2306330546;
 

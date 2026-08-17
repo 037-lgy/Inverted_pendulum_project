@@ -31,7 +31,7 @@
 <tr name="10" id="10">
 <td><a id="l10" class='ln'>10</a></td><td><span class="ct"> * Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019</span></td></tr>
 <tr name="11" id="11">
-<td><a id="l11" class='ln'>11</a></td><td><span class="ct"> * C/C++ source code generated on : Mon Jul 27 10:28:57 2026</span></td></tr>
+<td><a id="l11" class='ln'>11</a></td><td><span class="ct"> * C/C++ source code generated on : Mon Aug 17 11:10:16 2026</span></td></tr>
 <tr name="12" id="12">
 <td><a id="l12" class='ln'>12</a></td><td><span class="ct"> *</span></td></tr>
 <tr name="13" id="13">
@@ -427,27 +427,27 @@
 <tr name="208" id="208">
 <td><a id="l208" class='ln'>208</a></td><td>  <span class="ct">/* Computed Parameter: UnitDelay_InitialCon_g5o4mik1am</span></td></tr>
 <tr name="209" id="209">
-<td><a id="l209" class='ln'>209</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="209">&lt;Root&gt;/Unit Delay</a>'</span></td></tr>
+<td><a id="l209" class='ln'>209</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="209">&lt;S1&gt;/Unit Delay</a>'</span></td></tr>
 <tr name="210" id="210">
 <td><a id="l210" class='ln'>210</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="211" id="211">
-<td><a id="l211" class='ln'>211</a></td><td>  <span class="br">{</span> 0.0F, 0.0F, 0.0F, 0.0F <span class="br">}</span>,</td></tr>
+<td><a id="l211" class='ln'>211</a></td><td>  0.0F,</td></tr>
 <tr name="212" id="212">
 <td><a id="l212" class='ln'>212</a></td><td></td></tr>
 <tr name="213" id="213">
-<td><a id="l213" class='ln'>213</a></td><td>  <span class="ct">/* Computed Parameter: Gain2_Gain_ezbw1uq0ur</span></td></tr>
+<td><a id="l213" class='ln'>213</a></td><td>  <span class="ct">/* Computed Parameter: UnitDelay1_InitialCondition</span></td></tr>
 <tr name="214" id="214">
-<td><a id="l214" class='ln'>214</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="214">&lt;Root&gt;/Gain2</a>'</span></td></tr>
+<td><a id="l214" class='ln'>214</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="214">&lt;S1&gt;/Unit Delay1</a>'</span></td></tr>
 <tr name="215" id="215">
 <td><a id="l215" class='ln'>215</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="216" id="216">
-<td><a id="l216" class='ln'>216</a></td><td>  <span class="br">{</span> <a id="216c5" class="tk">-</a>0.2606F, <a id="216c15" class="tk">-</a>18.0048F, <a id="216c26" class="tk">-</a>0.7444F, <a id="216c36" class="tk">-</a>1.75716F <span class="br">}</span>,</td></tr>
+<td><a id="l216" class='ln'>216</a></td><td>  0.0F,</td></tr>
 <tr name="217" id="217">
 <td><a id="l217" class='ln'>217</a></td><td></td></tr>
 <tr name="218" id="218">
-<td><a id="l218" class='ln'>218</a></td><td>  <span class="ct">/* Computed Parameter: Constant6_Value_hyqvqn5fwb</span></td></tr>
+<td><a id="l218" class='ln'>218</a></td><td>  <span class="ct">/* Computed Parameter: UnitDelay2_InitialCondition</span></td></tr>
 <tr name="219" id="219">
-<td><a id="l219" class='ln'>219</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="219">&lt;S6&gt;/Constant6</a>'</span></td></tr>
+<td><a id="l219" class='ln'>219</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="219">&lt;S1&gt;/Unit Delay2</a>'</span></td></tr>
 <tr name="220" id="220">
 <td><a id="l220" class='ln'>220</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="221" id="221">
@@ -457,7 +457,7 @@
 <tr name="223" id="223">
 <td><a id="l223" class='ln'>223</a></td><td>  <span class="ct">/* Computed Parameter: UnitDelay3_InitialCondition</span></td></tr>
 <tr name="224" id="224">
-<td><a id="l224" class='ln'>224</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="224">&lt;S21&gt;/UnitDelay3</a>'</span></td></tr>
+<td><a id="l224" class='ln'>224</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="224">&lt;S1&gt;/Unit Delay3</a>'</span></td></tr>
 <tr name="225" id="225">
 <td><a id="l225" class='ln'>225</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="226" id="226">
@@ -465,139 +465,169 @@
 <tr name="227" id="227">
 <td><a id="l227" class='ln'>227</a></td><td></td></tr>
 <tr name="228" id="228">
-<td><a id="l228" class='ln'>228</a></td><td>  <span class="ct">/* Computed Parameter: Constant7_Value</span></td></tr>
+<td><a id="l228" class='ln'>228</a></td><td>  <span class="ct">/* Computed Parameter: Gain2_Gain_ezbw1uq0ur</span></td></tr>
 <tr name="229" id="229">
-<td><a id="l229" class='ln'>229</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="229">&lt;S6&gt;/Constant7</a>'</span></td></tr>
+<td><a id="l229" class='ln'>229</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="229">&lt;Root&gt;/Gain2</a>'</span></td></tr>
 <tr name="230" id="230">
 <td><a id="l230" class='ln'>230</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="231" id="231">
-<td><a id="l231" class='ln'>231</a></td><td>  1.0F,</td></tr>
+<td><a id="l231" class='ln'>231</a></td><td>  <span class="br">{</span> <a id="231c5" class="tk">-</a>0.2606F, <a id="231c15" class="tk">-</a>18.0048F, <a id="231c26" class="tk">-</a>0.7444F, <a id="231c36" class="tk">-</a>1.75716F <span class="br">}</span>,</td></tr>
 <tr name="232" id="232">
 <td><a id="l232" class='ln'>232</a></td><td></td></tr>
 <tr name="233" id="233">
-<td><a id="l233" class='ln'>233</a></td><td>  <span class="ct">/* Computed Parameter: Constant5_Value_jhrxeiwmg5</span></td></tr>
+<td><a id="l233" class='ln'>233</a></td><td>  <span class="ct">/* Computed Parameter: Constant6_Value_hyqvqn5fwb</span></td></tr>
 <tr name="234" id="234">
-<td><a id="l234" class='ln'>234</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="234">&lt;S6&gt;/Constant5</a>'</span></td></tr>
+<td><a id="l234" class='ln'>234</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="234">&lt;S6&gt;/Constant6</a>'</span></td></tr>
 <tr name="235" id="235">
 <td><a id="l235" class='ln'>235</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="236" id="236">
-<td><a id="l236" class='ln'>236</a></td><td>  1.0F,</td></tr>
+<td><a id="l236" class='ln'>236</a></td><td>  0.0F,</td></tr>
 <tr name="237" id="237">
 <td><a id="l237" class='ln'>237</a></td><td></td></tr>
 <tr name="238" id="238">
-<td><a id="l238" class='ln'>238</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_NumCoef</span></td></tr>
+<td><a id="l238" class='ln'>238</a></td><td>  <span class="ct">/* Computed Parameter: UnitDelay3_InitialCo_lmdiiaxmks</span></td></tr>
 <tr name="239" id="239">
-<td><a id="l239" class='ln'>239</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="239">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
+<td><a id="l239" class='ln'>239</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="239">&lt;S21&gt;/UnitDelay3</a>'</span></td></tr>
 <tr name="240" id="240">
 <td><a id="l240" class='ln'>240</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="241" id="241">
-<td><a id="l241" class='ln'>241</a></td><td>  0.2F,</td></tr>
+<td><a id="l241" class='ln'>241</a></td><td>  0.0F,</td></tr>
 <tr name="242" id="242">
 <td><a id="l242" class='ln'>242</a></td><td></td></tr>
 <tr name="243" id="243">
-<td><a id="l243" class='ln'>243</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_DenCoef</span></td></tr>
+<td><a id="l243" class='ln'>243</a></td><td>  <span class="ct">/* Computed Parameter: Constant7_Value</span></td></tr>
 <tr name="244" id="244">
-<td><a id="l244" class='ln'>244</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="244">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
+<td><a id="l244" class='ln'>244</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="244">&lt;S6&gt;/Constant7</a>'</span></td></tr>
 <tr name="245" id="245">
 <td><a id="l245" class='ln'>245</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="246" id="246">
-<td><a id="l246" class='ln'>246</a></td><td>  <span class="br">{</span> 1.0F, <a id="246c11" class="tk">-</a>0.8F <span class="br">}</span>,</td></tr>
+<td><a id="l246" class='ln'>246</a></td><td>  1.0F,</td></tr>
 <tr name="247" id="247">
 <td><a id="l247" class='ln'>247</a></td><td></td></tr>
 <tr name="248" id="248">
-<td><a id="l248" class='ln'>248</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_InitialStates</span></td></tr>
+<td><a id="l248" class='ln'>248</a></td><td>  <span class="ct">/* Computed Parameter: Constant5_Value_jhrxeiwmg5</span></td></tr>
 <tr name="249" id="249">
-<td><a id="l249" class='ln'>249</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="249">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
+<td><a id="l249" class='ln'>249</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="249">&lt;S6&gt;/Constant5</a>'</span></td></tr>
 <tr name="250" id="250">
 <td><a id="l250" class='ln'>250</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="251" id="251">
-<td><a id="l251" class='ln'>251</a></td><td>  0.0F,</td></tr>
+<td><a id="l251" class='ln'>251</a></td><td>  1.0F,</td></tr>
 <tr name="252" id="252">
 <td><a id="l252" class='ln'>252</a></td><td></td></tr>
 <tr name="253" id="253">
-<td><a id="l253" class='ln'>253</a></td><td>  <span class="ct">/* Computed Parameter: Constant_Value_aljrxhz2pj</span></td></tr>
+<td><a id="l253" class='ln'>253</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_NumCoef</span></td></tr>
 <tr name="254" id="254">
-<td><a id="l254" class='ln'>254</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="254">&lt;S5&gt;/Constant</a>'</span></td></tr>
+<td><a id="l254" class='ln'>254</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="254">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
 <tr name="255" id="255">
 <td><a id="l255" class='ln'>255</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="256" id="256">
-<td><a id="l256" class='ln'>256</a></td><td>  440U,</td></tr>
+<td><a id="l256" class='ln'>256</a></td><td>  0.2F,</td></tr>
 <tr name="257" id="257">
 <td><a id="l257" class='ln'>257</a></td><td></td></tr>
 <tr name="258" id="258">
-<td><a id="l258" class='ln'>258</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p2</span></td></tr>
+<td><a id="l258" class='ln'>258</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_DenCoef</span></td></tr>
 <tr name="259" id="259">
-<td><a id="l259" class='ln'>259</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="259">&lt;S20&gt;/Speaker</a>'</span></td></tr>
+<td><a id="l259" class='ln'>259</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="259">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
 <tr name="260" id="260">
 <td><a id="l260" class='ln'>260</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="261" id="261">
-<td><a id="l261" class='ln'>261</a></td><td>  100U,</td></tr>
+<td><a id="l261" class='ln'>261</a></td><td>  <span class="br">{</span> 1.0F, <a id="261c11" class="tk">-</a>0.8F <span class="br">}</span>,</td></tr>
 <tr name="262" id="262">
 <td><a id="l262" class='ln'>262</a></td><td></td></tr>
 <tr name="263" id="263">
-<td><a id="l263" class='ln'>263</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p4</span></td></tr>
+<td><a id="l263" class='ln'>263</a></td><td>  <span class="ct">/* Computed Parameter: DiscreteFilter_InitialStates</span></td></tr>
 <tr name="264" id="264">
-<td><a id="l264" class='ln'>264</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="264">&lt;S20&gt;/Speaker</a>'</span></td></tr>
+<td><a id="l264" class='ln'>264</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="264">&lt;S1&gt;/Discrete Filter</a>'</span></td></tr>
 <tr name="265" id="265">
 <td><a id="l265" class='ln'>265</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="266" id="266">
-<td><a id="l266" class='ln'>266</a></td><td>  100U,</td></tr>
+<td><a id="l266" class='ln'>266</a></td><td>  0.0F,</td></tr>
 <tr name="267" id="267">
 <td><a id="l267" class='ln'>267</a></td><td></td></tr>
 <tr name="268" id="268">
-<td><a id="l268" class='ln'>268</a></td><td>  <span class="ct">/* Computed Parameter: FixPtUnitDelay2_InitialConditio</span></td></tr>
+<td><a id="l268" class='ln'>268</a></td><td>  <span class="ct">/* Computed Parameter: Constant_Value_aljrxhz2pj</span></td></tr>
 <tr name="269" id="269">
-<td><a id="l269" class='ln'>269</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="269">&lt;S19&gt;/FixPt Unit Delay2</a>'</span></td></tr>
+<td><a id="l269" class='ln'>269</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="269">&lt;S5&gt;/Constant</a>'</span></td></tr>
 <tr name="270" id="270">
 <td><a id="l270" class='ln'>270</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="271" id="271">
-<td><a id="l271" class='ln'>271</a></td><td>  1U,</td></tr>
+<td><a id="l271" class='ln'>271</a></td><td>  440U,</td></tr>
 <tr name="272" id="272">
 <td><a id="l272" class='ln'>272</a></td><td></td></tr>
 <tr name="273" id="273">
-<td><a id="l273" class='ln'>273</a></td><td>  <span class="ct">/* Computed Parameter: FixPtConstant_Value</span></td></tr>
+<td><a id="l273" class='ln'>273</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p2</span></td></tr>
 <tr name="274" id="274">
-<td><a id="l274" class='ln'>274</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="274">&lt;S19&gt;/FixPt Constant</a>'</span></td></tr>
+<td><a id="l274" class='ln'>274</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="274">&lt;S20&gt;/Speaker</a>'</span></td></tr>
 <tr name="275" id="275">
 <td><a id="l275" class='ln'>275</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="276" id="276">
-<td><a id="l276" class='ln'>276</a></td><td>  0U,</td></tr>
+<td><a id="l276" class='ln'>276</a></td><td>  100U,</td></tr>
 <tr name="277" id="277">
 <td><a id="l277" class='ln'>277</a></td><td></td></tr>
 <tr name="278" id="278">
-<td><a id="l278" class='ln'>278</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p1</span></td></tr>
+<td><a id="l278" class='ln'>278</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p4</span></td></tr>
 <tr name="279" id="279">
 <td><a id="l279" class='ln'>279</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="279">&lt;S20&gt;/Speaker</a>'</span></td></tr>
 <tr name="280" id="280">
 <td><a id="l280" class='ln'>280</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="281" id="281">
-<td><a id="l281" class='ln'>281</a></td><td>  1U,</td></tr>
+<td><a id="l281" class='ln'>281</a></td><td>  100U,</td></tr>
 <tr name="282" id="282">
 <td><a id="l282" class='ln'>282</a></td><td></td></tr>
 <tr name="283" id="283">
-<td><a id="l283" class='ln'>283</a></td><td>  <span class="ct">/* Computed Parameter: ManualSwitch_CurrentSetting</span></td></tr>
+<td><a id="l283" class='ln'>283</a></td><td>  <span class="ct">/* Computed Parameter: FixPtUnitDelay2_InitialConditio</span></td></tr>
 <tr name="284" id="284">
-<td><a id="l284" class='ln'>284</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="284">&lt;Root&gt;/Manual Switch</a>'</span></td></tr>
+<td><a id="l284" class='ln'>284</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="284">&lt;S19&gt;/FixPt Unit Delay2</a>'</span></td></tr>
 <tr name="285" id="285">
 <td><a id="l285" class='ln'>285</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="286" id="286">
-<td><a id="l286" class='ln'>286</a></td><td>  1U</td></tr>
+<td><a id="l286" class='ln'>286</a></td><td>  1U,</td></tr>
 <tr name="287" id="287">
-<td><a id="l287" class='ln'>287</a></td><td><span class="br">}</span>;</td></tr>
+<td><a id="l287" class='ln'>287</a></td><td></td></tr>
 <tr name="288" id="288">
-<td><a id="l288" class='ln'>288</a></td><td></td></tr>
+<td><a id="l288" class='ln'>288</a></td><td>  <span class="ct">/* Computed Parameter: FixPtConstant_Value</span></td></tr>
 <tr name="289" id="289">
-<td><a id="l289" class='ln'>289</a></td><td><span class="ct">/*</span></td></tr>
+<td><a id="l289" class='ln'>289</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="289">&lt;S19&gt;/FixPt Constant</a>'</span></td></tr>
 <tr name="290" id="290">
-<td><a id="l290" class='ln'>290</a></td><td><span class="ct"> * File trailer for generated code.</span></td></tr>
+<td><a id="l290" class='ln'>290</a></td><td><span class="ct">   */</span></td></tr>
 <tr name="291" id="291">
-<td><a id="l291" class='ln'>291</a></td><td><span class="ct"> *</span></td></tr>
+<td><a id="l291" class='ln'>291</a></td><td>  0U,</td></tr>
 <tr name="292" id="292">
-<td><a id="l292" class='ln'>292</a></td><td><span class="ct"> * [EOF]</span></td></tr>
+<td><a id="l292" class='ln'>292</a></td><td></td></tr>
 <tr name="293" id="293">
-<td><a id="l293" class='ln'>293</a></td><td><span class="ct"> */</span></td></tr>
+<td><a id="l293" class='ln'>293</a></td><td>  <span class="ct">/* Computed Parameter: Speaker_p1</span></td></tr>
 <tr name="294" id="294">
-<td><a id="l294" class='ln'>294</a></td><td></td></tr>
+<td><a id="l294" class='ln'>294</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="294">&lt;S20&gt;/Speaker</a>'</span></td></tr>
+<tr name="295" id="295">
+<td><a id="l295" class='ln'>295</a></td><td><span class="ct">   */</span></td></tr>
+<tr name="296" id="296">
+<td><a id="l296" class='ln'>296</a></td><td>  1U,</td></tr>
+<tr name="297" id="297">
+<td><a id="l297" class='ln'>297</a></td><td></td></tr>
+<tr name="298" id="298">
+<td><a id="l298" class='ln'>298</a></td><td>  <span class="ct">/* Computed Parameter: ManualSwitch_CurrentSetting</span></td></tr>
+<tr name="299" id="299">
+<td><a id="l299" class='ln'>299</a></td><td><span class="ct">   * Referenced by: '<a class="ct blk" blk_line="299">&lt;Root&gt;/Manual Switch</a>'</span></td></tr>
+<tr name="300" id="300">
+<td><a id="l300" class='ln'>300</a></td><td><span class="ct">   */</span></td></tr>
+<tr name="301" id="301">
+<td><a id="l301" class='ln'>301</a></td><td>  1U</td></tr>
+<tr name="302" id="302">
+<td><a id="l302" class='ln'>302</a></td><td><span class="br">}</span>;</td></tr>
+<tr name="303" id="303">
+<td><a id="l303" class='ln'>303</a></td><td></td></tr>
+<tr name="304" id="304">
+<td><a id="l304" class='ln'>304</a></td><td><span class="ct">/*</span></td></tr>
+<tr name="305" id="305">
+<td><a id="l305" class='ln'>305</a></td><td><span class="ct"> * File trailer for generated code.</span></td></tr>
+<tr name="306" id="306">
+<td><a id="l306" class='ln'>306</a></td><td><span class="ct"> *</span></td></tr>
+<tr name="307" id="307">
+<td><a id="l307" class='ln'>307</a></td><td><span class="ct"> * [EOF]</span></td></tr>
+<tr name="308" id="308">
+<td><a id="l308" class='ln'>308</a></td><td><span class="ct"> */</span></td></tr>
+<tr name="309" id="309">
+<td><a id="l309" class='ln'>309</a></td><td></td></tr>
 </table>
 </pre>
 </body>

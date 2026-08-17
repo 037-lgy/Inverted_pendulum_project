@@ -8,7 +8,7 @@
  *
  * Model version              : 1.920
  * Simulink Coder version : 9.3 (R2020a) 18-Nov-2019
- * C source code generated on : Mon Jul 27 10:28:57 2026
+ * C source code generated on : Mon Aug 17 11:10:16 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM 9
@@ -63,7 +63,7 @@ static DataTypeTransition rtBTransitions[] = {
 
   { (char_T *)(&RT_Sim_Corr_DWork.FromWs_PWORK.TimePtr), 11, 0, 4 },
 
-  { (char_T *)(&RT_Sim_Corr_DWork.UnitDelay_DSTATE[0]), 1, 0, 12 },
+  { (char_T *)(&RT_Sim_Corr_DWork.UnitDelay_DSTATE), 1, 0, 12 },
 
   { (char_T *)(&RT_Sim_Corr_DWork.FromWs_IWORK.PrevIndex), 10, 0, 1 },
 

@@ -8,7 +8,7 @@
  *
  * Model version                  : 1.920
  * Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
- * C/C++ source code generated on : Mon Jul 27 10:28:57 2026
+ * C/C++ source code generated on : Mon Aug 17 11:10:16 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM 9
@@ -110,8 +110,11 @@ typedef struct {
     void *LoggedData;
   } Scope_PWORK_pmo3q4xz34;            /* '<S6>/Scope' */
 
-  real32_T UnitDelay_DSTATE[4];        /* '<Root>/Unit Delay' */
-  real32_T UnitDelay3_DSTATE;          /* '<S21>/UnitDelay3' */
+  real32_T UnitDelay_DSTATE;           /* '<S1>/Unit Delay' */
+  real32_T UnitDelay1_DSTATE;          /* '<S1>/Unit Delay1' */
+  real32_T UnitDelay2_DSTATE;          /* '<S1>/Unit Delay2' */
+  real32_T UnitDelay3_DSTATE;          /* '<S1>/Unit Delay3' */
+  real32_T UnitDelay3_DSTATE_mj2mn2t3em;/* '<S21>/UnitDelay3' */
   real32_T DiscreteFilter_states;      /* '<S1>/Discrete Filter' */
   real32_T UnitDelay_DSTATE_cfkvxtl130;/* '<S5>/Unit Delay' */
   real32_T UnitDelay_DSTATE_hzuovbre5y;/* '<S17>/Unit Delay' */
@@ -249,10 +252,22 @@ struct Parameters_RT_Sim_Corr_ {
   real32_T Constant6_Value;            /* Computed Parameter: Constant6_Value
                                         * Referenced by: '<S21>/Constant6'
                                         */
-  real32_T UnitDelay_InitialCon_g5o4mik1am[4];
+  real32_T UnitDelay_InitialCon_g5o4mik1am;
                           /* Computed Parameter: UnitDelay_InitialCon_g5o4mik1am
-                           * Referenced by: '<Root>/Unit Delay'
+                           * Referenced by: '<S1>/Unit Delay'
                            */
+  real32_T UnitDelay1_InitialCondition;
+                              /* Computed Parameter: UnitDelay1_InitialCondition
+                               * Referenced by: '<S1>/Unit Delay1'
+                               */
+  real32_T UnitDelay2_InitialCondition;
+                              /* Computed Parameter: UnitDelay2_InitialCondition
+                               * Referenced by: '<S1>/Unit Delay2'
+                               */
+  real32_T UnitDelay3_InitialCondition;
+                              /* Computed Parameter: UnitDelay3_InitialCondition
+                               * Referenced by: '<S1>/Unit Delay3'
+                               */
   real32_T Gain2_Gain_ezbw1uq0ur[4];/* Computed Parameter: Gain2_Gain_ezbw1uq0ur
                                      * Referenced by: '<Root>/Gain2'
                                      */
@@ -260,10 +275,10 @@ struct Parameters_RT_Sim_Corr_ {
                                /* Computed Parameter: Constant6_Value_hyqvqn5fwb
                                 * Referenced by: '<S6>/Constant6'
                                 */
-  real32_T UnitDelay3_InitialCondition;
-                              /* Computed Parameter: UnitDelay3_InitialCondition
-                               * Referenced by: '<S21>/UnitDelay3'
-                               */
+  real32_T UnitDelay3_InitialCo_lmdiiaxmks;
+                          /* Computed Parameter: UnitDelay3_InitialCo_lmdiiaxmks
+                           * Referenced by: '<S21>/UnitDelay3'
+                           */
   real32_T Constant7_Value;            /* Computed Parameter: Constant7_Value
                                         * Referenced by: '<S6>/Constant7'
                                         */

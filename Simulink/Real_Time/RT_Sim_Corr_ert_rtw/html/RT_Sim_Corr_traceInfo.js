@@ -63,8 +63,6 @@ function RTW_rtwnameSIDMap() {
 	this.sidHashMap["RT_Sim_Corr:4542"] = {rtwname: "<Root>/Signal Builder"};
 	this.rtwnameHashMap["<Root>/Sum"] = {sid: "RT_Sim_Corr:4641"};
 	this.sidHashMap["RT_Sim_Corr:4641"] = {rtwname: "<Root>/Sum"};
-	this.rtwnameHashMap["<Root>/Unit Delay"] = {sid: "RT_Sim_Corr:4645"};
-	this.sidHashMap["RT_Sim_Corr:4645"] = {rtwname: "<Root>/Unit Delay"};
 	this.rtwnameHashMap["<S1>/vl"] = {sid: "RT_Sim_Corr:4627"};
 	this.sidHashMap["RT_Sim_Corr:4627"] = {rtwname: "<S1>/vl"};
 	this.rtwnameHashMap["<S1>/vr"] = {sid: "RT_Sim_Corr:4628"};
@@ -97,6 +95,14 @@ function RTW_rtwnameSIDMap() {
 	this.sidHashMap["RT_Sim_Corr:4297"] = {rtwname: "<S1>/Gyro Sensor1"};
 	this.rtwnameHashMap["<S1>/Logical Operator"] = {sid: "RT_Sim_Corr:4604"};
 	this.sidHashMap["RT_Sim_Corr:4604"] = {rtwname: "<S1>/Logical Operator"};
+	this.rtwnameHashMap["<S1>/Unit Delay"] = {sid: "RT_Sim_Corr:4645"};
+	this.sidHashMap["RT_Sim_Corr:4645"] = {rtwname: "<S1>/Unit Delay"};
+	this.rtwnameHashMap["<S1>/Unit Delay1"] = {sid: "RT_Sim_Corr:4706"};
+	this.sidHashMap["RT_Sim_Corr:4706"] = {rtwname: "<S1>/Unit Delay1"};
+	this.rtwnameHashMap["<S1>/Unit Delay2"] = {sid: "RT_Sim_Corr:4707"};
+	this.sidHashMap["RT_Sim_Corr:4707"] = {rtwname: "<S1>/Unit Delay2"};
+	this.rtwnameHashMap["<S1>/Unit Delay3"] = {sid: "RT_Sim_Corr:4708"};
+	this.sidHashMap["RT_Sim_Corr:4708"] = {rtwname: "<S1>/Unit Delay3"};
 	this.rtwnameHashMap["<S1>/cont"] = {sid: "RT_Sim_Corr:4299"};
 	this.sidHashMap["RT_Sim_Corr:4299"] = {rtwname: "<S1>/cont"};
 	this.rtwnameHashMap["<S1>/theta"] = {sid: "RT_Sim_Corr:4630"};

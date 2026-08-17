@@ -8,7 +8,7 @@
  *
  * Model version                  : 1.920
  * Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
- * C/C++ source code generated on : Mon Jul 27 10:28:57 2026
+ * C/C++ source code generated on : Mon Aug 17 11:10:16 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM 9
@@ -133,17 +133,19 @@ void RT_Sim_Corr_step(void)
   /* Sum: '<Root>/Sum' incorporates:
    *  Gain: '<Root>/Gain1'
    *  Gain: '<Root>/Gain2'
-   *  UnitDelay: '<Root>/Unit Delay'
+   *  UnitDelay: '<S1>/Unit Delay'
+   *  UnitDelay: '<S1>/Unit Delay1'
+   *  UnitDelay: '<S1>/Unit Delay2'
+   *  UnitDelay: '<S1>/Unit Delay3'
    */
   RT_Sim_Corr_B.Sum = RT_Sim_Corr_P.Gain1_Gain_cpx4lbewpy * rtb_Saturation3 -
     (((RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur[0] *
-       RT_Sim_Corr_DWork.UnitDelay_DSTATE[0] +
-       RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur[1] *
-       RT_Sim_Corr_DWork.UnitDelay_DSTATE[1]) +
+       RT_Sim_Corr_DWork.UnitDelay_DSTATE + RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur
+       [1] * RT_Sim_Corr_DWork.UnitDelay1_DSTATE) +
       RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur[2] *
-      RT_Sim_Corr_DWork.UnitDelay_DSTATE[2]) +
+      RT_Sim_Corr_DWork.UnitDelay2_DSTATE) +
      RT_Sim_Corr_P.Gain2_Gain_ezbw1uq0ur[3] *
-     RT_Sim_Corr_DWork.UnitDelay_DSTATE[3]);
+     RT_Sim_Corr_DWork.UnitDelay3_DSTATE);
 
   /* S-Function (ev3_gyro_sensor): '<S1>/Gyro Sensor1' */
   rtb_Encoder1_0 = getGyroSensorValue(4U);
@@ -172,7 +174,7 @@ void RT_Sim_Corr_step(void)
     /* Sum: '<S21>/Sum' incorporates:
      *  UnitDelay: '<S21>/UnitDelay3'
      */
-    u0 += RT_Sim_Corr_DWork.UnitDelay3_DSTATE;
+    u0 += RT_Sim_Corr_DWork.UnitDelay3_DSTATE_mj2mn2t3em;
 
     /* MinMax: '<S21>/MinMax' incorporates:
      *  Constant: '<S6>/Constant8'
@@ -460,14 +462,20 @@ void RT_Sim_Corr_step(void)
 
   /* End of Outputs for SubSystem: '<S1>/Balance and Drive Control' */
 
-  /* Update for UnitDelay: '<Root>/Unit Delay' */
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[0] = RT_Sim_Corr_B.Gain;
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[1] = RT_Sim_Corr_B.UnitDelay;
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[2] = RT_Sim_Corr_B.Gain_oopwalytwu;
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[3] = RT_Sim_Corr_B.psidot;
+  /* Update for UnitDelay: '<S1>/Unit Delay' */
+  RT_Sim_Corr_DWork.UnitDelay_DSTATE = RT_Sim_Corr_B.Gain;
+
+  /* Update for UnitDelay: '<S1>/Unit Delay1' */
+  RT_Sim_Corr_DWork.UnitDelay1_DSTATE = RT_Sim_Corr_B.UnitDelay;
+
+  /* Update for UnitDelay: '<S1>/Unit Delay2' */
+  RT_Sim_Corr_DWork.UnitDelay2_DSTATE = RT_Sim_Corr_B.Gain_oopwalytwu;
+
+  /* Update for UnitDelay: '<S1>/Unit Delay3' */
+  RT_Sim_Corr_DWork.UnitDelay3_DSTATE = RT_Sim_Corr_B.psidot;
 
   /* Update for UnitDelay: '<S21>/UnitDelay3' */
-  RT_Sim_Corr_DWork.UnitDelay3_DSTATE = RT_Sim_Corr_B.counter_value;
+  RT_Sim_Corr_DWork.UnitDelay3_DSTATE_mj2mn2t3em = RT_Sim_Corr_B.counter_value;
 
   /* Update for DiscreteFilter: '<S1>/Discrete Filter' */
   RT_Sim_Corr_DWork.DiscreteFilter_states = RT_Sim_Corr_DWork.DiscreteFilter_tmp;
@@ -609,10 +617,10 @@ void RT_Sim_Corr_initialize(void)
   RT_Sim_Corr_M->Timing.stepSize0 = 0.004;
 
   /* External mode info */
-  RT_Sim_Corr_M->Sizes.checksums[0] = (2336633234U);
-  RT_Sim_Corr_M->Sizes.checksums[1] = (2221029277U);
-  RT_Sim_Corr_M->Sizes.checksums[2] = (2507445849U);
-  RT_Sim_Corr_M->Sizes.checksums[3] = (773997457U);
+  RT_Sim_Corr_M->Sizes.checksums[0] = (2553972110U);
+  RT_Sim_Corr_M->Sizes.checksums[1] = (963568288U);
+  RT_Sim_Corr_M->Sizes.checksums[2] = (3669205218U);
+  RT_Sim_Corr_M->Sizes.checksums[3] = (2306330546U);
 
   {
     static const sysRanDType rtAlwaysEnabled = SUBSYS_RAN_BC_ENABLE;
@@ -696,19 +704,25 @@ void RT_Sim_Corr_initialize(void)
 
   /* End of Start for SubSystem: '<S1>/Balance and Drive Control' */
 
-  /* InitializeConditions for UnitDelay: '<Root>/Unit Delay' */
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[0] =
-    RT_Sim_Corr_P.UnitDelay_InitialCon_g5o4mik1am[0];
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[1] =
-    RT_Sim_Corr_P.UnitDelay_InitialCon_g5o4mik1am[1];
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[2] =
-    RT_Sim_Corr_P.UnitDelay_InitialCon_g5o4mik1am[2];
-  RT_Sim_Corr_DWork.UnitDelay_DSTATE[3] =
-    RT_Sim_Corr_P.UnitDelay_InitialCon_g5o4mik1am[3];
+  /* InitializeConditions for UnitDelay: '<S1>/Unit Delay' */
+  RT_Sim_Corr_DWork.UnitDelay_DSTATE =
+    RT_Sim_Corr_P.UnitDelay_InitialCon_g5o4mik1am;
 
-  /* InitializeConditions for UnitDelay: '<S21>/UnitDelay3' */
+  /* InitializeConditions for UnitDelay: '<S1>/Unit Delay1' */
+  RT_Sim_Corr_DWork.UnitDelay1_DSTATE =
+    RT_Sim_Corr_P.UnitDelay1_InitialCondition;
+
+  /* InitializeConditions for UnitDelay: '<S1>/Unit Delay2' */
+  RT_Sim_Corr_DWork.UnitDelay2_DSTATE =
+    RT_Sim_Corr_P.UnitDelay2_InitialCondition;
+
+  /* InitializeConditions for UnitDelay: '<S1>/Unit Delay3' */
   RT_Sim_Corr_DWork.UnitDelay3_DSTATE =
     RT_Sim_Corr_P.UnitDelay3_InitialCondition;
+
+  /* InitializeConditions for UnitDelay: '<S21>/UnitDelay3' */
+  RT_Sim_Corr_DWork.UnitDelay3_DSTATE_mj2mn2t3em =
+    RT_Sim_Corr_P.UnitDelay3_InitialCo_lmdiiaxmks;
 
   /* InitializeConditions for DiscreteFilter: '<S1>/Discrete Filter' */
   RT_Sim_Corr_DWork.DiscreteFilter_states =
